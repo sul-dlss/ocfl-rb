@@ -1,8 +1,7 @@
-# Ocfl
+# OCFL for Ruby
 
-TODO: Delete this and the text below, and describe your gem
+This is an implementation of the Oxford Common File Layout (OCFL) for Ruby.  See https://ocfl.io for more information about OCFL.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ocfl`. To experiment with that code, run `bin/console` for an interactive prompt.
 
 ## Installation
 
@@ -18,7 +17,14 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+file_directory = OCFL::Object::Directory.new(object_root: '/files/[object_root]')
+file_directory.exists?
+# => false
+file_directory.save
+file_directory.exists?
+# => true
+```
 
 ## Development
 

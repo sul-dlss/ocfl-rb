@@ -14,7 +14,16 @@ module OCFL
       attr_reader :object_root
 
       def inventory
-        @inventory ||= Inventory.new(file_name: inventory_file.to_s)
+        @inventory ||= begin
+          data = InventoryLoader.load(inventory_file.to_s)
+          if data.success?
+            Inventory.new(data: data.value!)
+          else
+            @errors = data.failure
+            puts @errors.inspect
+            nil
+          end
+        end
       end
 
       def valid?
@@ -22,7 +31,7 @@ module OCFL
           namaste_exists? &&
           inventory_file_exists? &&
           inventory_file_matches_checksum? &&
-          inventory.valid?
+          !!inventory # Ensures it could be loaded
       end
 
       def directory_exists?
@@ -52,10 +61,18 @@ module OCFL
       def inventory_file_matches_checksum?
         return false unless File.exist?(inventory_checksum_file)
 
-        actual = Digest::SHA512.file inventory_file
+        actual = inventory_file_checksum
         expected = File.read(inventory_checksum_file)
         expected.match?(/\A#{actual}\s+inventory\.json\z/)
       end
+
+      def inventory_file_checksum
+        Digest::SHA512.file inventory_file
+      end
+
+      def write_inventory; end
+
+      def update_inventory_checksum; end
     end
     # rubocop:enable Style/StringConcatenation
   end

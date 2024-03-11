@@ -3,6 +3,7 @@
 require_relative "ocfl/version"
 require "zeitwerk"
 require "json"
+require "dry/monads"
 require "dry-schema"
 require "dry-struct"
 require "active_support"

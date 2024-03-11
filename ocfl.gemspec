@@ -30,6 +30,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "activesupport", ">= 7.0"
+  spec.add_dependency "dry-monads", "~> 1.6"
   spec.add_dependency "dry-schema", "~> 1.13"
   spec.add_dependency "dry-struct", "~> 1.6"
   spec.add_dependency "zeitwerk", "~> 2.0"

@@ -6,21 +6,6 @@ module OCFL
     # https://ocfl.io/1.1/spec/#inventory
     class Inventory
       URI_1_1 = "https://ocfl.io/1.1/spec/#inventory"
-      VersionEnum = Types::String.enum(URI_1_1)
-      DigestAlgorithm = Types::String.enum("md5", "sha1", "sha256", "sha512", "blake2b-512")
-
-      # https://ocfl.io/1.1/spec/#inventory-structure
-      # Validation of the incoming data
-      Schema = Dry::Schema.Params do
-        # config.validate_keys = true
-        required(:id).filled(:string)
-        required(:type).filled(VersionEnum)
-        required(:digestAlgorithm).filled(DigestAlgorithm)
-        required(:head).filled(:string)
-        optional(:contentDirectory).filled(:string)
-        required(:versions).hash
-        required(:manifest).hash
-      end
 
       # A data structure for the inventory
       class InventoryStruct < Dry::Struct
@@ -34,28 +19,28 @@ module OCFL
         attribute :manifest, Types::Hash
       end
 
-      def initialize(file_name:)
-        @file_name = file_name
+      def initialize(data:)
+        @data = data
       end
 
-      attr_reader :errors, :data, :file_name
+      attr_reader :errors, :data
 
       delegate :id, :head, :versions, :manifest, to: :data
 
-      def load
-        return if @loaded
+      # def load
+      #   return if @loaded
 
-        @loaded = true
-        data = File.read(file_name)
-        json = JSON.parse(data)
-        @errors = Schema.call(json).errors
-        @data = InventoryStruct.new(json) if valid?
-      end
+      #   @loaded = true
+      #   data = File.read(file_name)
+      #   json = JSON.parse(data)
+      #   @errors = Schema.call(json).errors
+      #   @data = InventoryStruct.new(json) if valid?
+      # end
 
-      def valid?
-        load
-        errors.empty?
-      end
+      # def valid?
+      #   load
+      #   errors.empty?
+      # end
     end
   end
 end

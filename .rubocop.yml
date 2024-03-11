@@ -15,7 +15,7 @@ Layout/LineLength:
 Metrics/BlockLength:
   AllowedMethods:
     - describe
-
+    - context
 
 Gemspec/DeprecatedAttributeAssignment: # new in 1.30
   Enabled: true

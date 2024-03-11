@@ -4,7 +4,10 @@ require "tmpdir"
 require "fileutils"
 
 RSpec.describe OCFL::Object::Inventory do
-  subject(:inventory) { described_class.new(file_name:) }
+  subject(:inventory) { described_class.new(data:) }
+  let(:data) do
+    OCFL::Object::InventoryLoader.load(file_name).value!
+  end
   let(:content) do
     <<~JSON
       {
@@ -32,10 +35,6 @@ RSpec.describe OCFL::Object::Inventory do
     JSON
   end
 
-  before do
-    inventory.load
-  end
-
   around do |example|
     Dir.mktmpdir("ocfl-rspec-") do |dir|
       @file_name = "#{dir}/inventory.json"
@@ -44,17 +43,6 @@ RSpec.describe OCFL::Object::Inventory do
     end
   end
   let(:file_name) { @file_name }
-
-  describe "#valid?" do
-    context "when it is the wrong schema" do
-      let(:content) { '{"manifest":{}}' }
-      it { is_expected.not_to be_valid }
-    end
-
-    context "when it is the right schema" do
-      it { is_expected.to be_valid }
-    end
-  end
 
   describe "#id" do
     subject { inventory.id }
