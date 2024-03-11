@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Ocfl do
+RSpec.describe OCFL do
   it "has a version number" do
-    expect(Ocfl::VERSION).not_to be nil
-  end
-
-  it "does something useful" do
-    expect(false).to eq(true)
+    expect(OCFL::VERSION).not_to be nil
   end
 end
