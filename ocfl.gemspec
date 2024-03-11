@@ -4,7 +4,7 @@ require_relative "lib/ocfl/version"
 
 Gem::Specification.new do |spec|
   spec.name = "ocfl"
-  spec.version = Ocfl::VERSION
+  spec.version = OCFL::VERSION
   spec.authors = ["Justin Coyne"]
   spec.email = ["jcoyne@justincoyne.com"]
 
