@@ -29,10 +29,10 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "activesupport", ">= 7.0"
   spec.add_dependency "dry-schema", "~> 1.13"
   spec.add_dependency "dry-struct", "~> 1.6"
   spec.add_dependency "zeitwerk", "~> 2.0"
-  spec.add_dependency "activesupport", ">= 7.0"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

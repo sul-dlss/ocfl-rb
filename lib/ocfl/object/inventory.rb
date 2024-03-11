@@ -23,11 +23,13 @@ module OCFL
       # https://ocfl.io/1.1/spec/#inventory-structure
       # Validation of the incoming data
       Schema = Dry::Schema.Params do
+        # config.validate_keys = true
         required(:id).filled(:string)
         required(:type).filled(VersionEnum)
         required(:digestAlgorithm).filled(DigestAlgorithm)
         required(:head).filled(:string)
         optional(:contentDirectory).filled(:string)
+        required(:versions).hash
       end
 
       # A data structure for the inventory
@@ -38,6 +40,7 @@ module OCFL
         attribute :digestAlgorithm, Types::String
         attribute :head, Types::String
         attribute? :contentDirectory, Types::String
+        attribute :versions, Types::Hash
       end
 
       def initialize(file_name:)
@@ -46,7 +49,7 @@ module OCFL
 
       attr_reader :errors, :data, :file_name
 
-      delegate :id, :head, to: :data
+      delegate :id, :head, :versions, to: :data
 
       def load
         return if @loaded
