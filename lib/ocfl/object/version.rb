@@ -7,7 +7,7 @@ module OCFL
     class Version < Dry.Struct
       transform_keys(&:to_sym)
       attribute :created, Types::String
-      attribute :state, Types::Hash
+      attribute :state, Types::Hash.map(Types::String, Types::Array.of(Types::String))
     end
   end
 end
