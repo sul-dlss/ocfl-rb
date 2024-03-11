@@ -59,11 +59,10 @@ RSpec.describe OCFL::Object::Directory do
         Dir.mktmpdir("ocfl-rspec-") do |dir|
           FileUtils.touch("#{dir}/0=ocfl_object_1.1")
           FileUtils.touch("#{dir}/inventory.json")
-          File.open("#{dir}/inventory.json.sha512", "w") do |f|
-            # rubocop:disable Layout/LineLength
-            f.write "31598ebd1468eaa3b082afafdc90e500f32502d8824696dcc6674c9ccddb8fecd4bb4f0495a49d8ae83922c332e8ebdf0e34988589dbc3dfa6acaedf9b706870  inventory.json"
-            # rubocop:enable Layout/LineLength
-          end
+          # rubocop:disable Layout/LineLength
+          File.write("#{dir}/inventory.json.sha512",
+                     "31598ebd1468eaa3b082afafdc90e500f32502d8824696dcc6674c9ccddb8fecd4bb4f0495a49d8ae83922c332e8ebdf0e34988589dbc3dfa6acaedf9b706870  inventory.json")
+          # rubocop:enable Layout/LineLength
           @temp_dir = dir
           example.run
         end
@@ -78,14 +77,11 @@ RSpec.describe OCFL::Object::Directory do
         Dir.mktmpdir("ocfl-rspec-") do |dir|
           FileUtils.touch("#{dir}/0=ocfl_object_1.1")
           FileUtils.touch("#{dir}/inventory.json")
-          File.open("#{dir}/inventory.json", "w") do |f|
-            f.write '{"manifest":{}}'
-          end
-          File.open("#{dir}/inventory.json.sha512", "w") do |f|
-            # rubocop:disable Layout/LineLength
-            f.write "dd95136fa794284f8ffd5eb444b2b08732aa3f4d0d08a5f20b1c03a182294c34501066ac4b02159d38bcb6c8557fc724c636929775212c5194984d68cb1508a1  inventory.json"
-            # rubocop:enable Layout/LineLength
-          end
+          File.write("#{dir}/inventory.json", '{"manifest":{}}')
+          # rubocop:disable Layout/LineLength
+          File.write("#{dir}/inventory.json.sha512",
+                     "dd95136fa794284f8ffd5eb444b2b08732aa3f4d0d08a5f20b1c03a182294c34501066ac4b02159d38bcb6c8557fc724c636929775212c5194984d68cb1508a1  inventory.json")
+          # rubocop:enable Layout/LineLength
           @temp_dir = dir
           example.run
         end

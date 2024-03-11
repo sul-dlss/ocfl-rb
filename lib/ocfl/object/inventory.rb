@@ -1,22 +1,11 @@
 # frozen_string_literal: true
 
-require "json"
-require "dry-schema"
-require "dry-struct"
-require "active_support"
-require "active_support/core_ext/module/delegation"
-
 module OCFL
   module Object
     # Represents the JSON file that stores the object inventory
     # https://ocfl.io/1.1/spec/#inventory
     class Inventory
       URI_1_1 = "https://ocfl.io/1.1/spec/#inventory"
-
-      # Schema types
-      module Types
-        include Dry.Types()
-      end
       VersionEnum = Types::String.enum(URI_1_1)
       DigestAlgorithm = Types::String.enum("md5", "sha1", "sha256", "sha512", "blake2b-512")
 
@@ -41,7 +30,7 @@ module OCFL
         attribute :digestAlgorithm, Types::String
         attribute :head, Types::String
         attribute? :contentDirectory, Types::String
-        attribute :versions, Types::Hash
+        attribute :versions, Types::Hash.map(Types::String, Version)
         attribute :manifest, Types::Hash
       end
 

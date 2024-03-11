@@ -2,6 +2,11 @@
 
 require_relative "ocfl/version"
 require "zeitwerk"
+require "json"
+require "dry-schema"
+require "dry-struct"
+require "active_support"
+require "active_support/core_ext/module/delegation"
 
 # Custom zeitwerk inflector for OCFL
 class OCFLInflector < Zeitwerk::Inflector
@@ -18,5 +23,9 @@ loader.setup
 
 module OCFL
   class Error < StandardError; end
-  # Your code goes here...
+
+  # Schema types
+  module Types
+    include Dry.Types()
+  end
 end

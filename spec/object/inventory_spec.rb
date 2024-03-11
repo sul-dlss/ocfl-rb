@@ -39,9 +39,7 @@ RSpec.describe OCFL::Object::Inventory do
   around do |example|
     Dir.mktmpdir("ocfl-rspec-") do |dir|
       @file_name = "#{dir}/inventory.json"
-      File.open(@file_name, "w") do |f|
-        f.write content
-      end
+      File.write(@file_name, content)
       example.run
     end
   end
