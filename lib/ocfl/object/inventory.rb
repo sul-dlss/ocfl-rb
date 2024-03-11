@@ -30,6 +30,7 @@ module OCFL
         required(:head).filled(:string)
         optional(:contentDirectory).filled(:string)
         required(:versions).hash
+        required(:manifest).hash
       end
 
       # A data structure for the inventory
@@ -41,6 +42,7 @@ module OCFL
         attribute :head, Types::String
         attribute? :contentDirectory, Types::String
         attribute :versions, Types::Hash
+        attribute :manifest, Types::Hash
       end
 
       def initialize(file_name:)
@@ -49,7 +51,7 @@ module OCFL
 
       attr_reader :errors, :data, :file_name
 
-      delegate :id, :head, :versions, to: :data
+      delegate :id, :head, :versions, :manifest, to: :data
 
       def load
         return if @loaded
