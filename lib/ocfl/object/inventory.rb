@@ -3,6 +3,8 @@
 require "json"
 require "dry-schema"
 require "dry-struct"
+require "active_support"
+require "active_support/core_ext/module/delegation"
 
 module OCFL
   module Object
@@ -43,6 +45,8 @@ module OCFL
       end
 
       attr_reader :errors, :data, :file_name
+
+      delegate :id, :head, to: :data
 
       def load
         return if @loaded
