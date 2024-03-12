@@ -15,31 +15,40 @@ module OCFL
 
       def inventory
         @inventory ||= begin
-          data = InventoryLoader.load(inventory_file.to_s)
+          data = InventoryLoader.load(object_root + "inventory.json")
           if data.success?
             Inventory.new(data: data.value!)
           else
             @errors = data.failure
-            puts @errors.inspect
+            puts @errors.messages.inspect
+            nil
+          end
+        end
+      end
+
+      def head_inventory
+        @head_inventory ||= begin
+          data = InventoryLoader.load(object_root + inventory.head + "inventory.json")
+          if data.success?
+            Inventory.new(data: data.value!)
+          else
+            @head_directory_validerrors = data.failure
+            puts @head_errors.messages.inspect
             nil
           end
         end
       end
 
       def valid?
-        directory_exists? &&
+        InventoryValidator.new(directory: object_root).valid? &&
           namaste_exists? &&
-          inventory_file_exists? &&
-          inventory_file_matches_checksum? &&
-          !!inventory # Ensures it could be loaded
+          !inventory.nil? && # Ensures it could be loaded
+          head_directory_valid?
       end
 
-      def directory_exists?
-        File.directory?(object_root)
-      end
-
-      def inventory_file_exists?
-        File.exist?(inventory_file)
+      def head_directory_valid?
+        InventoryValidator.new(directory: object_root + inventory.head).valid? &&
+          !head_inventory.nil? # Ensures it could be loaded
       end
 
       def namaste_exists?
@@ -49,30 +58,6 @@ module OCFL
       def namaste_file
         object_root + "0=ocfl_object_1.1"
       end
-
-      def inventory_file
-        object_root + "inventory.json"
-      end
-
-      def inventory_checksum_file
-        object_root + "inventory.json.sha512"
-      end
-
-      def inventory_file_matches_checksum?
-        return false unless File.exist?(inventory_checksum_file)
-
-        actual = inventory_file_checksum
-        expected = File.read(inventory_checksum_file)
-        expected.match?(/\A#{actual}\s+inventory\.json\z/)
-      end
-
-      def inventory_file_checksum
-        Digest::SHA512.file inventory_file
-      end
-
-      def write_inventory; end
-
-      def update_inventory_checksum; end
     end
     # rubocop:enable Style/StringConcatenation
   end

@@ -20,6 +20,13 @@ module OCFL
         FileUtils.touch(object_root + "0=ocfl_object_1.1")
         write_inventory
         update_inventory_checksum
+        create_head_version
+      end
+
+      def create_head_version
+        FileUtils.mkdir(object_root + version)
+        FileUtils.cp(inventory_file, object_root + version + "inventory.json")
+        FileUtils.cp(checksum_file, object_root + version + "inventory.json.sha512")
       end
 
       def write_inventory
@@ -28,6 +35,10 @@ module OCFL
 
       def inventory_file
         object_root + "inventory.json"
+      end
+
+      def checksum_file
+        object_root + "inventory.json.sha512"
       end
 
       def update_inventory_checksum
