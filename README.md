@@ -22,7 +22,9 @@ directory = OCFL::Object::Directory.new(object_root: '/files/[object_root]')
 directory.exists?
 # => false
 builder = OCFL::Object::DirectoryBuilder.new(object_root: 'spec/abc123', id: 'http://example.com/abc123')
-directory = builder.build
+builder.copy_file('sig/ocfl.rbs')
+
+directory = builder.save
 directory.exists?
 # => true
 directory.valid?
@@ -34,6 +36,12 @@ new_version.save
 
 directory.head
 # => 'v2'
+
+directory.path("v2", "ocfl.rbs")
+# => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
+
+directory.path(:head, "ocfl.rbs")
+# => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
 ```
 
 ## Development

@@ -13,10 +13,10 @@ RSpec.describe OCFL::Object::DraftVersion do
     end
   end
 
-  let(:object_root) { @temp_dir }
+  let(:object_root) { File.join(@temp_dir, "abc123") }
 
   describe "#copy_file" do
-    let(:directory) { builder.build }
+    let(:directory) { builder.save }
     let(:new_version) { directory.begin_new_version }
 
     context "with a file in the current directory" do
@@ -34,6 +34,8 @@ RSpec.describe OCFL::Object::DraftVersion do
         new_version.copy_file("sig/ocfl.rbs")
         new_version.save
         expect(directory).to be_valid
+        expect(directory.path("v2", "ocfl.rbs")).to eq Pathname.new(object_root) + "v2/content/ocfl.rbs"
+        expect(directory.path(:head, "ocfl.rbs")).to eq Pathname.new(object_root) + "v2/content/ocfl.rbs"
       end
     end
   end

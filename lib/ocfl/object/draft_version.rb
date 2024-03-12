@@ -38,10 +38,11 @@ module OCFL
 
       def add(incoming_path)
         digest = Digest::SHA512.file(incoming_path).to_s
-        relative_path = content_path.relative_path_from(object_directory.object_root)
-        file_path = (relative_path + File.basename(incoming_path)).to_s
-        @manifest[digest] = [file_path]
-        @state[digest] = [file_path]
+        version_content_path = content_path.relative_path_from(object_directory.object_root)
+        logical_file_path = File.basename(incoming_path)
+        file_path_relative_to_root = (version_content_path + logical_file_path).to_s
+        @manifest[digest] = [file_path_relative_to_root]
+        @state[digest] = [logical_file_path]
       end
 
       def prepare_content_directory
@@ -60,7 +61,7 @@ module OCFL
       end
 
       def content_path
-        path + "content" # rubocop:disable Style/StringConcatenation
+        path + "content"
       end
 
       def path
@@ -80,8 +81,8 @@ module OCFL
       def save
         inventory = build_inventory
         InventoryWriter.new(inventory:, path:).write
-        FileUtils.cp(path + "inventory.json", object_directory.object_root) # rubocop:disable Style/StringConcatenation
-        FileUtils.cp(path + "inventory.json.sha512", object_directory.object_root) # rubocop:disable Style/StringConcatenation
+        FileUtils.cp(path + "inventory.json", object_directory.object_root)
+        FileUtils.cp(path + "inventory.json.sha512", object_directory.object_root)
         object_directory.reload
       end
     end

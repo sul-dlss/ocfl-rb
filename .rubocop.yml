@@ -17,6 +17,9 @@ Metrics/BlockLength:
     - describe
     - context
 
+Style/StringConcatenation:
+  Enabled: false # Too many false positives with Pathname#+
+
 Gemspec/DeprecatedAttributeAssignment: # new in 1.30
   Enabled: true
 Gemspec/DevelopmentDependencies: # new in 1.44

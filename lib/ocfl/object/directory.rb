@@ -5,15 +5,25 @@ require "digest"
 module OCFL
   module Object
     # An OCFL Directory layout for a particular object.
-    # rubocop:disable Style/StringConcatenation
     class Directory
-      def initialize(object_root:)
+      # @param [String] object_root
+      # @param [Inventory] inventory this is only passed in when creating a new object. (see DirectoryBuilder)
+      def initialize(object_root:, inventory: nil)
         @object_root = Pathname.new(object_root)
+        @version_inventory = {}
+        @version_inventory_errors = {}
+        @inventory = inventory
       end
 
       attr_reader :object_root, :errors
 
       delegate :head, to: :inventory
+
+      def path(version, filename)
+        version = head if version == :head
+        relative_path = version_inventory(version).path(filename)
+        object_root + relative_path
+      end
 
       def inventory
         @inventory ||= begin
@@ -29,23 +39,27 @@ module OCFL
       end
 
       def head_inventory
-        @head_inventory ||= begin
-          data = InventoryLoader.load(object_root + inventory.head + "inventory.json")
+        version_inventory(inventory.head)
+      end
+
+      def version_inventory(version)
+        @version_inventory[version] ||= begin
+          data = InventoryLoader.load(object_root + version + "inventory.json")
           if data.success?
             Inventory.new(data: data.value!)
           else
-            @head_directory_errors = data.failure
-            puts @head_errors.messages.inspect
+            @version_inventory_errors[version] = data.failure
+            puts @version_inventory_errors[version].messages.inspect
             nil
           end
         end
       end
 
       def reload
-        @head_inventory = nil
+        @version_inventory = {}
         @inventory = nil
         @errors = nil
-        @head_errors = nil
+        @version_inventory_errors = {}
       end
 
       def begin_new_version

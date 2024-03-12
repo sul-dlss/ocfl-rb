@@ -13,12 +13,15 @@ RSpec.describe OCFL::Object::DirectoryBuilder do
     end
   end
 
-  let(:object_root) { @temp_dir }
+  let(:object_root) { File.join(@temp_dir, "abc123") }
 
-  describe "#build" do
-    it "has built a valid object" do
-      builder.build
-      expect(OCFL::Object::Directory.new(object_root:)).to be_valid
+  describe "#save" do
+    it "has built a valid object with a file" do
+      builder.copy_file("Gemfile.lock")
+
+      directory = builder.save
+      expect(directory).to be_valid
+      expect(directory.path("v1", "Gemfile.lock")).to eq Pathname.new(object_root) + "v1/content/Gemfile.lock"
     end
   end
 end

@@ -5,7 +5,6 @@ require "digest"
 module OCFL
   module Object
     # Writes a OCFL Inventory to json on disk
-    # rubocop:disable Style/StringConcatenation
     class InventoryWriter
       def initialize(inventory:, path:)
         @path = path

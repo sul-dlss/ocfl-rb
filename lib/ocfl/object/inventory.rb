@@ -26,6 +26,19 @@ module OCFL
       attr_reader :errors, :data
 
       delegate :id, :head, :versions, :manifest, to: :data
+
+      def content_directory
+        data.contentDirectory || "content"
+      end
+
+      # @returns [String] the path to the file relative to the object root. (e.g. v2/content/image.tiff)
+      def path(logical_path)
+        sha = versions[head].state.find { |_sha, file_names| file_names.include?(logical_path) }&.first
+
+        return unless sha
+
+        manifest.fetch(sha).first
+      end
     end
   end
 end

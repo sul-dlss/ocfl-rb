@@ -5,7 +5,6 @@ require "digest"
 module OCFL
   module Object
     # Checks to see that the inventory.json and it's checksum in a direcotory are valid
-    # rubocop:disable Style/StringConcatenation
     class InventoryValidator
       def initialize(directory:)
         @directory = Pathname.new(directory)
