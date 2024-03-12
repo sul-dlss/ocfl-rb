@@ -18,11 +18,14 @@ If bundler is not being used to manage dependencies, install the gem by executin
 ## Usage
 
 ```ruby
-file_directory = OCFL::Object::Directory.new(object_root: '/files/[object_root]')
-file_directory.exists?
+directory = OCFL::Object::Directory.new(object_root: '/files/[object_root]')
+directory.exists?
 # => false
-file_directory.save
-file_directory.exists?
+builder = OCFL::Object::DirectoryBuilder.new(object_root: 'spec/abc123', id: 'http://example.com/abc123')
+directory = builder.build
+directory.exists?
+# => true
+directory.valid?
 # => true
 ```
 

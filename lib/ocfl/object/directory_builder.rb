@@ -15,12 +15,14 @@ module OCFL
 
       attr_reader :id, :version, :object_root
 
+      # @return [Directory]
       def build
         FileUtils.mkdir_p(object_root)
         FileUtils.touch(object_root + "0=ocfl_object_1.1")
         write_inventory
         update_inventory_checksum
         create_head_version
+        Directory.new(object_root:)
       end
 
       def create_head_version

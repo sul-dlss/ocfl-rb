@@ -11,7 +11,7 @@ module OCFL
         @object_root = Pathname.new(object_root)
       end
 
-      attr_reader :object_root
+      attr_reader :object_root, :errors
 
       def inventory
         @inventory ||= begin
@@ -32,11 +32,15 @@ module OCFL
           if data.success?
             Inventory.new(data: data.value!)
           else
-            @head_directory_validerrors = data.failure
+            @head_directory_errors = data.failure
             puts @head_errors.messages.inspect
             nil
           end
         end
+      end
+
+      def exists?
+        namaste_exists?
       end
 
       def valid?
