@@ -90,4 +90,43 @@ RSpec.describe OCFL::Object::Directory do
       it { is_expected.not_to be_valid }
     end
   end
+
+  describe "#overwrite_current_version" do
+    around do |example|
+      Dir.mktmpdir("ocfl-rspec-") do |dir|
+        @temp_dir = dir
+        example.run
+      end
+    end
+
+    let(:object_root) { File.join(@temp_dir, "abc123") }
+
+    let(:builder) { OCFL::Object::DirectoryBuilder.new(object_root:, id: "http://example.com/minimal") }
+    let(:directory) do
+      builder.copy_file("Gemfile.lock")
+      builder.save
+    end
+    let(:overwrite) { directory.overwrite_current_version }
+
+    context "with a file in the current directory" do
+      around do |example|
+        FileUtils.touch("spec/Gemfile.lock")
+        example.run
+        FileUtils.rm("spec/Gemfile.lock")
+      end
+
+      it "overwrites the file" do
+        before_keys = directory.inventory.manifest.keys
+
+        expect do
+          overwrite.copy_file("spec/Gemfile.lock")
+          overwrite.save
+        end.not_to change(directory, :head)
+        expect(directory).to be_valid
+        expect(directory.inventory.manifest.keys).not_to include before_keys.first
+        expect(directory.inventory.manifest.values).to eq [["v1/content/Gemfile.lock"]]
+        expect(directory.inventory.versions["v1"].state.values).to eq [["Gemfile.lock"]]
+      end
+    end
+  end
 end

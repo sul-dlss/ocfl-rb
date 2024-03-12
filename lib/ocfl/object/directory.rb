@@ -66,6 +66,10 @@ module OCFL
         DraftVersion.new(object_directory: self)
       end
 
+      def overwrite_current_version
+        DraftVersion.new(object_directory: self, overwrite_head: true)
+      end
+
       def exists?
         namaste_exists?
       end

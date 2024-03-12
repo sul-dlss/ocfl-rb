@@ -40,6 +40,10 @@ directory.path("v2", "ocfl.rbs")
 
 directory.path(:head, "ocfl.rbs")
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
+
+new_version = directory.overwrite_current_version
+new_version.copy_file('sig/ocfl.rbs')
+new_version.save
 ```
 
 ## Development

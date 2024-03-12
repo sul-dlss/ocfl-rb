@@ -7,13 +7,17 @@ module OCFL
     # A new OCFL version
     class DraftVersion
       # @params [Directory] object_directory
-      def initialize(object_directory:)
+      def initialize(object_directory:, overwrite_head: false)
         @object_directory = object_directory
         @manifest = object_directory.inventory.manifest.dup
         @state = {}
+
+        number = object_directory.head.delete_prefix("v").to_i
+        @version_number = "v#{overwrite_head ? number : number + 1}"
+        @prepared_content = @prepared = overwrite_head
       end
 
-      attr_reader :object_directory, :manifest, :state
+      attr_reader :object_directory, :manifest, :state, :version_number
 
       def move_file(incoming_path)
         prepare_content_directory
@@ -68,14 +72,25 @@ module OCFL
         object_directory.object_root + version_number
       end
 
-      def version_number
-        @version_number ||= "v#{object_directory.head.delete_prefix("v").to_i + 1}"
-      end
-
       def build_inventory
         old_data = object_directory.inventory.data
-        versions = old_data.versions.merge(version_number => Version.new(created: Time.now.utc.iso8601, state: @state))
-        Inventory::InventoryStruct.new(old_data.to_h.merge(manifest:, head: version_number, versions:))
+        versions = versions(old_data.versions)
+        # Prune items from manifest if they are not part of any version
+
+        Inventory::InventoryStruct.new(old_data.to_h.merge(manifest: filtered_manifest(versions),
+                                                           head: version_number, versions:))
+      end
+
+      # This gives the update list of versions. The old list plus this new one.
+      # @param [Hash] old_versions the versions prior to this one.
+      def versions(old_versions)
+        old_versions.merge(version_number => Version.new(created: Time.now.utc.iso8601, state: @state))
+      end
+
+      # The manifest after unused SHAs have been filtered out.
+      def filtered_manifest(versions)
+        shas_in_versions = versions.values.flat_map { |v| v.state.keys }.uniq
+        manifest.slice(*shas_in_versions)
       end
 
       def save
