@@ -20,7 +20,6 @@ module OCFL
         FileUtils.mkdir_p(object_root)
         FileUtils.touch(object_root + "0=ocfl_object_1.1")
         write_inventory
-        update_inventory_checksum
         create_head_version
         Directory.new(object_root:)
       end
@@ -32,7 +31,8 @@ module OCFL
       end
 
       def write_inventory
-        File.write(inventory_file, build_inventory.to_h.to_json)
+        inventory = build_inventory
+        InventoryWriter.new(inventory:, path: object_root).write
       end
 
       def inventory_file
@@ -41,11 +41,6 @@ module OCFL
 
       def checksum_file
         object_root + "inventory.json.sha512"
-      end
-
-      def update_inventory_checksum
-        digest = Digest::SHA512.file inventory_file
-        File.write(object_root + "inventory.json.sha512", "#{digest} inventory.json")
       end
 
       def build_inventory

@@ -27,6 +27,13 @@ directory.exists?
 # => true
 directory.valid?
 # => true
+
+new_version = directory.begin_new_version
+new_version.copy_file('sig/ocfl.rbs')
+new_version.save
+
+directory.head
+# => 'v2'
 ```
 
 ## Development
@@ -37,4 +44,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/ocfl.
+Bug reports and pull requests are welcome on GitHub at https://github.com/sul-dlss/ocfl.

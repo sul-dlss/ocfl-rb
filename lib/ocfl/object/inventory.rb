@@ -26,21 +26,6 @@ module OCFL
       attr_reader :errors, :data
 
       delegate :id, :head, :versions, :manifest, to: :data
-
-      # def load
-      #   return if @loaded
-
-      #   @loaded = true
-      #   data = File.read(file_name)
-      #   json = JSON.parse(data)
-      #   @errors = Schema.call(json).errors
-      #   @data = InventoryStruct.new(json) if valid?
-      # end
-
-      # def valid?
-      #   load
-      #   errors.empty?
-      # end
     end
   end
 end

@@ -13,6 +13,8 @@ module OCFL
 
       attr_reader :object_root, :errors
 
+      delegate :head, to: :inventory
+
       def inventory
         @inventory ||= begin
           data = InventoryLoader.load(object_root + "inventory.json")
@@ -37,6 +39,17 @@ module OCFL
             nil
           end
         end
+      end
+
+      def reload
+        @head_inventory = nil
+        @inventory = nil
+        @errors = nil
+        @head_errors = nil
+      end
+
+      def begin_new_version
+        DraftVersion.new(object_directory: self)
       end
 
       def exists?
