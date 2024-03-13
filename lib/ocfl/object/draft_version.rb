@@ -31,19 +31,22 @@ module OCFL
         FileUtils.cp(incoming_path, content_path)
       end
 
-      # def copy_directory(incoming_path)
-      #   prepare_content_directory
-      #   Dir.foreach(incoming_path) do |file_name|
-      #     next if ['.', '..'].include?(file_name)
-      #     add(incoming_path)
-      #     FileUtils.cp(incoming_path, content_path)
-      #   end
-      # end
+      # Copies files into the object and preserves their relative paths as logical directories in the object
+      def copy_recursive(incoming_path)
+        prepare_content_directory
+        incoming_path = incoming_path.delete_suffix("/")
+        Dir.glob("#{incoming_path}/**/*").reject { |fn| File.directory?(fn) }.each do |file|
+          logical_file_path = file.delete_prefix(incoming_path).delete_prefix("/")
+          add(file, logical_file_path:)
+          parent_dir = (content_path + logical_file_path).parent
+          FileUtils.mkdir_p(parent_dir)
+          FileUtils.cp(file, content_path + logical_file_path)
+        end
+      end
 
-      def add(incoming_path)
+      def add(incoming_path, logical_file_path: File.basename(incoming_path))
         digest = Digest::SHA512.file(incoming_path).to_s
         version_content_path = content_path.relative_path_from(object_directory.object_root)
-        logical_file_path = File.basename(incoming_path)
         file_path_relative_to_root = (version_content_path + logical_file_path).to_s
         @manifest[digest] = [file_path_relative_to_root]
         @state[digest] = [logical_file_path]

@@ -39,4 +39,21 @@ RSpec.describe OCFL::Object::DraftVersion do
       end
     end
   end
+
+  describe "#copy_recursive" do
+    let(:directory) { builder.save }
+    let(:new_version) { directory.begin_new_version }
+
+    it "has built a valid object" do
+      expect do
+        new_version.copy_recursive("spec/")
+        new_version.save
+      end.to change(directory, :head).from("v1").to("v2")
+      expect(directory.versions["v2"].state.values.flatten).to include("object/draft_version_spec.rb")
+      expect(directory.manifest.values.flatten).to include("v2/content/object/draft_version_spec.rb")
+      expect(File.exist?("#{object_root}/v2/content/object/draft_version_spec.rb")).to be true
+
+      expect(directory).to be_valid
+    end
+  end
 end

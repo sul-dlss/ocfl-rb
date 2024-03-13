@@ -17,7 +17,7 @@ module OCFL
 
       attr_reader :object_root, :errors
 
-      delegate :head, to: :inventory
+      delegate :head, :versions, :manifest, to: :inventory
 
       def path(version, filename)
         version = head if version == :head
