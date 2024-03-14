@@ -25,23 +25,36 @@ module OCFL
         FileUtils.mv(incoming_path, content_path)
       end
 
-      def copy_file(incoming_path)
+      def copy_file(incoming_path, destination_path: '')
         prepare_content_directory
-        add(incoming_path)
-        FileUtils.cp(incoming_path, content_path)
+        copy_one(File.basename(incoming_path), incoming_path, destination_path)
       end
 
       # Copies files into the object and preserves their relative paths as logical directories in the object
-      def copy_recursive(incoming_path)
+      def copy_recursive(incoming_path, destination_path: '')
         prepare_content_directory
         incoming_path = incoming_path.delete_suffix("/")
         Dir.glob("#{incoming_path}/**/*").reject { |fn| File.directory?(fn) }.each do |file|
-          logical_file_path = file.delete_prefix(incoming_path).delete_prefix("/")
-          add(file, logical_file_path:)
-          parent_dir = (content_path + logical_file_path).parent
-          FileUtils.mkdir_p(parent_dir)
-          FileUtils.cp(file, content_path + logical_file_path)
+          copy_one(file.delete_prefix(incoming_path).delete_prefix("/"), file, destination_path)
         end
+      end
+
+      def save
+        inventory = build_inventory
+        InventoryWriter.new(inventory:, path:).write
+        FileUtils.cp(path + "inventory.json", object_directory.object_root)
+        FileUtils.cp(path + "inventory.json.sha512", object_directory.object_root)
+        object_directory.reload
+      end
+
+      private
+
+      def copy_one(logical_file_path, incoming_path, destination_path)
+        logical_file_path = File.join(destination_path, logical_file_path) unless destination_path.empty?
+        add(incoming_path, logical_file_path:)
+        parent_dir = (content_path + logical_file_path).parent
+        FileUtils.mkdir_p(parent_dir) unless parent_dir == content_path
+        FileUtils.cp(incoming_path, content_path + logical_file_path)
       end
 
       def add(incoming_path, logical_file_path: File.basename(incoming_path))
@@ -94,14 +107,6 @@ module OCFL
       def filtered_manifest(versions)
         shas_in_versions = versions.values.flat_map { |v| v.state.keys }.uniq
         manifest.slice(*shas_in_versions)
-      end
-
-      def save
-        inventory = build_inventory
-        InventoryWriter.new(inventory:, path:).write
-        FileUtils.cp(path + "inventory.json", object_directory.object_root)
-        FileUtils.cp(path + "inventory.json.sha512", object_directory.object_root)
-        object_directory.reload
       end
     end
   end
