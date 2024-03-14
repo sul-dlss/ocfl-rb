@@ -25,13 +25,13 @@ module OCFL
         FileUtils.mv(incoming_path, content_path)
       end
 
-      def copy_file(incoming_path, destination_path: '')
+      def copy_file(incoming_path, destination_path: "")
         prepare_content_directory
         copy_one(File.basename(incoming_path), incoming_path, destination_path)
       end
 
       # Copies files into the object and preserves their relative paths as logical directories in the object
-      def copy_recursive(incoming_path, destination_path: '')
+      def copy_recursive(incoming_path, destination_path: "")
         prepare_content_directory
         incoming_path = incoming_path.delete_suffix("/")
         Dir.glob("#{incoming_path}/**/*").reject { |fn| File.directory?(fn) }.each do |file|
