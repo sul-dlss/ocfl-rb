@@ -18,11 +18,16 @@ module OCFL
       attr_reader :id, :object_root, :object_directory
 
       def copy_file(...)
-        create_directory
+        create_object_directory
         version.copy_file(...)
       end
 
-      def create_directory
+      def copy_recursive(...)
+        create_object_directory
+        version.copy_recursive(...)
+      end
+
+      def create_object_directory
         FileUtils.mkdir_p(object_root)
       end
 
