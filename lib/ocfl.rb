@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "ocfl/version"
 require "zeitwerk"
 require "json"
 require "dry/monads"
@@ -9,17 +8,8 @@ require "dry-struct"
 require "active_support"
 require "active_support/core_ext/module/delegation"
 
-# Custom zeitwerk inflector for OCFL
-class OCFLInflector < Zeitwerk::Inflector
-  def camelize(basename, _abspath)
-    return "OCFL" if basename == "ocfl"
-
-    super
-  end
-end
-
 loader = Zeitwerk::Loader.for_gem
-loader.inflector = OCFLInflector.new
+loader.inflector.inflect("ocfl" => "OCFL")
 loader.setup
 
 module OCFL
