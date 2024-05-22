@@ -2,6 +2,6 @@
 
 RSpec.describe OCFL do
   it "has a version number" do
-    expect(OCFL::VERSION).not_to be nil
+    expect(OCFL::VERSION).not_to be_nil
   end
 end

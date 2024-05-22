@@ -29,7 +29,7 @@ module OCFL
       end
 
       def inventory_checksum_file
-        directory + "inventory.json.sha512"
+        directory / "inventory.json.sha512"
       end
 
       def inventory_file_checksum
@@ -37,9 +37,8 @@ module OCFL
       end
 
       def inventory_file
-        directory + "inventory.json"
+        directory / "inventory.json"
       end
     end
-    # rubocop:enable Style/StringConcatenation
   end
 end

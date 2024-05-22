@@ -23,11 +23,11 @@ module OCFL
       end
 
       def inventory_file
-        path + "inventory.json"
+        path / "inventory.json"
       end
 
       def checksum_file
-        path + "inventory.json.sha512"
+        path / "inventory.json.sha512"
       end
 
       def update_inventory_checksum
@@ -35,6 +35,5 @@ module OCFL
         File.write(checksum_file, "#{digest} inventory.json")
       end
     end
-    # rubocop:enable Style/StringConcatenation
   end
 end

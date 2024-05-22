@@ -6,18 +6,16 @@ require "fileutils"
 RSpec.describe OCFL::Object::InventoryLoader do
   subject(:data) { described_class.load(file_name) }
 
-  around do |example|
-    Dir.mktmpdir("ocfl-rspec-") do |dir|
-      @file_name = "#{dir}/inventory.json"
-      File.write(@file_name, content)
-      example.run
-    end
-  end
-  let(:file_name) { @file_name }
+  include_context "with temp directory"
+
+  let(:file_name) { "#{temp_dir}/inventory.json" }
+
+  before { File.write(file_name, content) }
 
   describe "#load" do
     context "when it is the wrong schema" do
       let(:content) { '{"manifest":{}}' }
+
       it { is_expected.to be_failure }
     end
 
@@ -48,6 +46,7 @@ RSpec.describe OCFL::Object::InventoryLoader do
           }
         JSON
       end
+
       it { is_expected.to be_success }
     end
   end

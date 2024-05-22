@@ -5,9 +5,13 @@ require "fileutils"
 
 RSpec.describe OCFL::Object::Inventory do
   subject(:inventory) { described_class.new(data:) }
+
+  include_context "with temp directory"
+
   let(:data) do
     OCFL::Object::InventoryLoader.load(file_name).value!
   end
+  let(:file_name) { "#{temp_dir}/inventory.json" }
   let(:content) do
     <<~JSON
       {
@@ -35,14 +39,7 @@ RSpec.describe OCFL::Object::Inventory do
     JSON
   end
 
-  around do |example|
-    Dir.mktmpdir("ocfl-rspec-") do |dir|
-      @file_name = "#{dir}/inventory.json"
-      File.write(@file_name, content)
-      example.run
-    end
-  end
-  let(:file_name) { @file_name }
+  before { File.write(file_name, content) }
 
   describe "#id" do
     subject { inventory.id }
