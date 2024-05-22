@@ -81,7 +81,7 @@ module OCFL
       end
 
       def content_path
-        path + "content"
+        path + object_directory.inventory.content_directory
       end
 
       def path
