@@ -28,6 +28,16 @@ module OCFL
         copy_one(File.basename(incoming_path), incoming_path, destination_path)
       end
 
+      # Note, this only removes the file from this version. Previous versions may still use it.
+      def delete_file(sha512_digest)
+        state.delete(sha512_digest)
+        # If the manifest points at the current content directory, then we can delete it.
+        file_paths = manifest[sha512_digest]
+        return unless file_paths.all? { |path| path.start_with?("#{version_number}/") }
+
+        File.unlink (object_directory.object_root + file_paths.first).to_s
+      end
+
       # Copies files into the object and preserves their relative paths as logical directories in the object
       def copy_recursive(incoming_path, destination_path: "")
         prepare_content_directory
@@ -93,8 +103,8 @@ module OCFL
       def build_inventory
         old_data = object_directory.inventory.data
         versions = versions(old_data.versions)
-        # Prune items from manifest if they are not part of any version
 
+        # Prune items from manifest if they are not part of any version
         Inventory::InventoryStruct.new(old_data.to_h.merge(manifest: filtered_manifest(versions),
                                                            head: version_number, versions:))
       end
@@ -108,7 +118,8 @@ module OCFL
       # The manifest after unused SHAs have been filtered out.
       def filtered_manifest(versions)
         shas_in_versions = versions.values.flat_map { |v| v.state.keys }.uniq
-        manifest.slice(*shas_in_versions)
+        manifest.slice!(*shas_in_versions)
+        manifest
       end
     end
   end

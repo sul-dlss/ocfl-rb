@@ -46,6 +46,7 @@ directory.head
 #### Re-open the existing head version
 ```
 new_version = directory.reopen_head_version
+new_version.delete_file('cb6c8557fc724c636929775212c5194984d68cb1508a1')
 new_version.copy_file('sig/ocfl.rbs')
 new_version.save
 ```
