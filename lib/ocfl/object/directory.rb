@@ -17,7 +17,7 @@ module OCFL
 
       delegate :head, :versions, :manifest, to: :inventory
 
-      def path(version, filename)
+      def path(filename:, version: nil)
         version = head if version == :head
         relative_path = version_inventory(version).path(filename)
         object_root / relative_path

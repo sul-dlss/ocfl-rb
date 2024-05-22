@@ -35,13 +35,20 @@ new_version.save
 directory.head
 # => 'v2'
 
+# List file names that were part of a given version
 directory.versions['v2'].file_names
 # => ["ocfl.rbs"]
 
-directory.path("v2", "ocfl.rbs")
+# Get the path of a file in a given version
+directory.path(filename: "ocfl.rbs", version: "v2")
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
 
-directory.path(:head, "ocfl.rbs")
+# Get the path of a file in the head version
+directory.path(filename: "ocfl.rbs", version: :head)
+# => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
+
+# Get the path of a file in any version
+directory.path(filename: "ocfl.rbs")
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
 
 new_version = directory.overwrite_current_version
