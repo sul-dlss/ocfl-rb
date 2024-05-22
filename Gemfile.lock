@@ -138,4 +138,4 @@ DEPENDENCIES
   rubocop (~> 1.63)
 
 BUNDLED WITH
-   2.5.5
+   2.5.10
