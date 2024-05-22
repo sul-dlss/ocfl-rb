@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "tmpdir"
-require "fileutils"
-
 RSpec.describe OCFL::Object::Inventory do
   subject(:inventory) { described_class.new(data:) }
 

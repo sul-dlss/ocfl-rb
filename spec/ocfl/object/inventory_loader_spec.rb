@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "tmpdir"
-require "fileutils"
-
 RSpec.describe OCFL::Object::InventoryLoader do
   subject(:data) { described_class.load(file_name) }
 

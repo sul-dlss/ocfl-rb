@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "fileutils"
-
 RSpec.describe OCFL::Object::DirectoryBuilder do
   subject(:builder) { described_class.new(object_root:, id: "http://example.com/minimal") }
 

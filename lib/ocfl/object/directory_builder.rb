@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "digest"
-
 module OCFL
   module Object
     # Creates a OCFL Directory layout for a particular object.

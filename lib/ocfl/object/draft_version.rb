@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "digest"
-
 module OCFL
   module Object
     # A new OCFL version

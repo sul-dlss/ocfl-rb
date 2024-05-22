@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "digest"
-
 module OCFL
   module Object
     # Checks to see that the inventory.json and it's checksum in a direcotory are valid

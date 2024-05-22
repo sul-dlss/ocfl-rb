@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "tmpdir"
 require "fileutils"
 
 RSpec.describe OCFL::Object::Directory do

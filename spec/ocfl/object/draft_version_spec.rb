@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "tmpdir"
-require "fileutils"
-
 RSpec.describe OCFL::Object::DraftVersion do
   include_context "with temp directory"
 

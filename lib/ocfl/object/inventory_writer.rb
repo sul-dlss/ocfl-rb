@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "digest"
-
 module OCFL
   module Object
     # Writes a OCFL Inventory to json on disk
