@@ -17,6 +17,10 @@ module OCFL
       attribute :state, Types::Hash.map(Types::String, Types::Array.of(Types::String))
       attribute? :message, Types::String
       attribute? :user, User
+
+      def file_names
+        state.values.flatten
+      end
     end
   end
 end

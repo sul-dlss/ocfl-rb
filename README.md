@@ -35,6 +35,9 @@ new_version.save
 directory.head
 # => 'v2'
 
+directory.versions['v2'].file_names
+# => ["ocfl.rbs"]
+
 directory.path("v2", "ocfl.rbs")
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
 
