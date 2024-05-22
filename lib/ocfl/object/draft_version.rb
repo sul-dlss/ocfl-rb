@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "digest"
-
 module OCFL
   module Object
     # A new OCFL version
@@ -42,8 +40,8 @@ module OCFL
       def save
         inventory = build_inventory
         InventoryWriter.new(inventory:, path:).write
-        FileUtils.cp(path + "inventory.json", object_directory.object_root)
-        FileUtils.cp(path + "inventory.json.sha512", object_directory.object_root)
+        FileUtils.cp(path / "inventory.json", object_directory.object_root)
+        FileUtils.cp(path / "inventory.json.sha512", object_directory.object_root)
         object_directory.reload
       end
 
@@ -52,15 +50,15 @@ module OCFL
       def copy_one(logical_file_path, incoming_path, destination_path)
         logical_file_path = File.join(destination_path, logical_file_path) unless destination_path.empty?
         add(incoming_path, logical_file_path:)
-        parent_dir = (content_path + logical_file_path).parent
+        parent_dir = (content_path / logical_file_path).parent
         FileUtils.mkdir_p(parent_dir) unless parent_dir == content_path
-        FileUtils.cp(incoming_path, content_path + logical_file_path)
+        FileUtils.cp(incoming_path, content_path / logical_file_path)
       end
 
       def add(incoming_path, logical_file_path: File.basename(incoming_path))
         digest = Digest::SHA512.file(incoming_path).to_s
         version_content_path = content_path.relative_path_from(object_directory.object_root)
-        file_path_relative_to_root = (version_content_path + logical_file_path).to_s
+        file_path_relative_to_root = (version_content_path / logical_file_path).to_s
         @manifest[digest] = [file_path_relative_to_root]
         @state[digest] = [logical_file_path]
       end
@@ -81,11 +79,11 @@ module OCFL
       end
 
       def content_path
-        path + object_directory.inventory.content_directory
+        path / object_directory.inventory.content_directory
       end
 
       def path
-        object_directory.object_root + version_number
+        object_directory.object_root / version_number
       end
 
       def build_inventory

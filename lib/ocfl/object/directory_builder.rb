@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "digest"
-
 module OCFL
   module Object
     # Creates a OCFL Directory layout for a particular object.
@@ -39,7 +37,7 @@ module OCFL
 
       # @return [Directory]
       def save
-        version_path = object_root + "v1"
+        version_path = object_root / "v1"
         FileUtils.mkdir_p(version_path)
         FileUtils.touch(object_directory.namaste_file)
         write_inventory

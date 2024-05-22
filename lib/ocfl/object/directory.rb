@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "digest"
-
 module OCFL
   module Object
     # An OCFL Directory layout for a particular object.
@@ -22,12 +20,12 @@ module OCFL
       def path(version, filename)
         version = head if version == :head
         relative_path = version_inventory(version).path(filename)
-        object_root + relative_path
+        object_root / relative_path
       end
 
       def inventory
         @inventory ||= begin
-          data = InventoryLoader.load(object_root + "inventory.json")
+          data = InventoryLoader.load(object_root / "inventory.json")
           if data.success?
             Inventory.new(data: data.value!)
           else
@@ -44,7 +42,7 @@ module OCFL
 
       def version_inventory(version)
         @version_inventory[version] ||= begin
-          data = InventoryLoader.load(object_root + version + "inventory.json")
+          data = InventoryLoader.load(object_root / version / "inventory.json")
           if data.success?
             Inventory.new(data: data.value!)
           else
@@ -83,7 +81,7 @@ module OCFL
       end
 
       def head_directory_valid?
-        InventoryValidator.new(directory: object_root + inventory.head).valid? &&
+        InventoryValidator.new(directory: object_root / inventory.head).valid? &&
           !head_inventory.nil? # Ensures it could be loaded
       end
 
@@ -92,9 +90,8 @@ module OCFL
       end
 
       def namaste_file
-        object_root + "0=ocfl_object_1.1"
+        object_root / "0=ocfl_object_1.1"
       end
     end
-    # rubocop:enable Style/StringConcatenation
   end
 end

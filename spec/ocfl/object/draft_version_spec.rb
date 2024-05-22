@@ -1,19 +1,10 @@
 # frozen_string_literal: true
 
-require "tmpdir"
-require "fileutils"
-
 RSpec.describe OCFL::Object::DraftVersion do
+  include_context "with temp directory"
+
   let(:builder) { OCFL::Object::DirectoryBuilder.new(object_root:, id: "http://example.com/minimal") }
-
-  around do |example|
-    Dir.mktmpdir("ocfl-rspec-") do |dir|
-      @temp_dir = dir
-      example.run
-    end
-  end
-
-  let(:object_root) { File.join(@temp_dir, "abc123") }
+  let(:object_root) { File.join(temp_dir, "abc123") }
 
   describe "#copy_file" do
     let(:directory) { builder.save }
@@ -34,8 +25,8 @@ RSpec.describe OCFL::Object::DraftVersion do
         new_version.copy_file("sig/ocfl.rbs")
         new_version.save
         expect(directory).to be_valid
-        expect(directory.path("v2", "ocfl.rbs")).to eq Pathname.new(object_root) + "v2/content/ocfl.rbs"
-        expect(directory.path(:head, "ocfl.rbs")).to eq Pathname.new(object_root) + "v2/content/ocfl.rbs"
+        expect(directory.path("v2", "ocfl.rbs")).to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
+        expect(directory.path(:head, "ocfl.rbs")).to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
       end
     end
 
@@ -47,8 +38,8 @@ RSpec.describe OCFL::Object::DraftVersion do
         new_version.copy_file("sig/ocfl.rbs")
         new_version.save
         expect(directory).to be_valid
-        expect(directory.path("v2", "ocfl.rbs")).to eq Pathname.new(object_root) + "v2/#{content_directory}/ocfl.rbs"
-        expect(directory.path(:head, "ocfl.rbs")).to eq Pathname.new(object_root) + "v2/#{content_directory}/ocfl.rbs"
+        expect(directory.path("v2", "ocfl.rbs")).to eq(Pathname.new(object_root) / "v2/#{content_directory}/ocfl.rbs")
+        expect(directory.path(:head, "ocfl.rbs")).to eq(Pathname.new(object_root) / "v2/#{content_directory}/ocfl.rbs")
       end
     end
   end
@@ -60,7 +51,7 @@ RSpec.describe OCFL::Object::DraftVersion do
     context "without a destination path" do
       it "builds a valid object" do
         expect do
-          new_version.copy_recursive("spec/")
+          new_version.copy_recursive("spec/ocfl/")
           new_version.save
         end.to change(directory, :head).from("v1").to("v2")
         expect(directory.versions["v2"].state.values.flatten).to include("object/draft_version_spec.rb")
@@ -74,7 +65,7 @@ RSpec.describe OCFL::Object::DraftVersion do
     context "with a destination path" do
       it "builds a valid object" do
         expect do
-          new_version.copy_recursive("spec/", destination_path: "data/")
+          new_version.copy_recursive("spec/ocfl/", destination_path: "data/")
           new_version.save
         end.to change(directory, :head).from("v1").to("v2")
         expect(directory.versions["v2"].state.values.flatten).to include("data/object/draft_version_spec.rb")

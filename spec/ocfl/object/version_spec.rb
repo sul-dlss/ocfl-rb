@@ -8,6 +8,7 @@ RSpec.describe OCFL::Object::Version do
                           "2d85...71458" => ["file2.xml"]
                         })
   end
+
   describe "#file_names" do
     subject { version.file_names }
 
