@@ -71,6 +71,55 @@ RSpec.describe OCFL::Object::Directory do
     end
   end
 
+  describe "#path" do
+    let(:builder) { OCFL::Object::DirectoryBuilder.new(object_root:, id: "http://example.com/minimal") }
+    let(:directory) do
+      builder.copy_file("Gemfile.lock")
+      builder.save
+    end
+    let(:object_root) { File.join(temp_dir, "abc123") }
+
+    before do
+      directory.begin_new_version.tap do |version|
+        version.copy_recursive("sig/")
+        version.save
+      end
+    end
+
+    it "returns the path from the specified version's inventory" do
+      expect(directory.path(filepath: "ocfl.rbs", version: "v2"))
+        .to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
+    end
+
+    context "when the filepath does not exist" do
+      it "raises a FileNotFound exception" do
+        expect { directory.path(filepath: "ocfl.rbs", version: "v1") }
+          .to raise_error(OCFL::Object::FileNotFound, /Path 'ocfl.rbs' not found in v1 inventory/)
+      end
+    end
+
+    context "when version is :head" do
+      it "returns the path from the most recent version's inventory" do
+        expect(directory.path(filepath: "ocfl.rbs", version: :head))
+          .to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
+      end
+    end
+
+    context "when version is nil" do
+      it "returns the path from the object's inventory" do
+        expect(directory.path(filepath: "Gemfile.lock"))
+          .to eq(Pathname.new(object_root) / "v1/content/Gemfile.lock")
+      end
+
+      context "when the filepath does not exist" do
+        it "raises a FileNotFound exception" do
+          expect { directory.path(filepath: "image.jp2") }
+            .to raise_error(OCFL::Object::FileNotFound, /Path 'image.jp2' not found in object inventory/)
+        end
+      end
+    end
+  end
+
   describe "#overwrite_current_version" do
     let(:builder) { OCFL::Object::DirectoryBuilder.new(object_root:, id: "http://example.com/minimal") }
     let(:directory) do

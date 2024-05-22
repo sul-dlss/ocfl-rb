@@ -32,13 +32,15 @@ module OCFL
         data.contentDirectory || "content"
       end
 
-      # @returns [String] the path to the file relative to the object root. (e.g. v2/content/image.tiff)
+      # @return [String,nil] the path to the file relative to the object root. (e.g. v2/content/image.tiff)
       def path(logical_path)
-        sha = state.find { |_sha, file_names| file_names.include?(logical_path) }&.first
+        matching_paths = manifest.values.flatten.select do |path|
+          path.match(%r{\Av\d+/#{content_directory}/#{logical_path}\z})
+        end
 
-        return unless sha
+        return if matching_paths.empty?
 
-        manifest.fetch(sha).first
+        matching_paths.max_by { |path| path[/\d+/].to_i }
       end
 
       def head_version

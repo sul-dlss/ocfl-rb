@@ -40,15 +40,15 @@ directory.versions['v2'].file_names
 # => ["ocfl.rbs"]
 
 # Get the path of a file in a given version
-directory.path(filename: "ocfl.rbs", version: "v2")
+directory.path(filepath: "ocfl.rbs", version: "v2")
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
 
 # Get the path of a file in the head version
-directory.path(filename: "ocfl.rbs", version: :head)
+directory.path(filepath: "ocfl.rbs", version: :head)
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
 
-# Get the path of a file in any version
-directory.path(filename: "ocfl.rbs")
+# Get the path of a file from the latest version in which it was changed
+directory.path(filepath: "ocfl.rbs")
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
 
 new_version = directory.overwrite_current_version

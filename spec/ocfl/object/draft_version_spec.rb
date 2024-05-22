@@ -25,9 +25,9 @@ RSpec.describe OCFL::Object::DraftVersion do
         new_version.copy_file("sig/ocfl.rbs")
         new_version.save
         expect(directory).to be_valid
-        expect(directory.path(version: "v2", filename: "ocfl.rbs"))
+        expect(directory.path(version: "v2", filepath: "ocfl.rbs"))
           .to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
-        expect(directory.path(version: :head, filename: "ocfl.rbs"))
+        expect(directory.path(version: :head, filepath: "ocfl.rbs"))
           .to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
       end
     end
@@ -40,9 +40,9 @@ RSpec.describe OCFL::Object::DraftVersion do
         new_version.copy_file("sig/ocfl.rbs")
         new_version.save
         expect(directory).to be_valid
-        expect(directory.path(version: "v2", filename: "ocfl.rbs"))
+        expect(directory.path(version: "v2", filepath: "ocfl.rbs"))
           .to eq(Pathname.new(object_root) / "v2/#{content_directory}/ocfl.rbs")
-        expect(directory.path(version: :head, filename: "ocfl.rbs"))
+        expect(directory.path(version: :head, filepath: "ocfl.rbs"))
           .to eq(Pathname.new(object_root) / "v2/#{content_directory}/ocfl.rbs")
       end
     end
