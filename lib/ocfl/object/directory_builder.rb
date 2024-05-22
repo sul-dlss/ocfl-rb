@@ -37,8 +37,7 @@ module OCFL
 
       # @return [Directory]
       def save
-        version_path = object_root / "v1"
-        FileUtils.mkdir_p(version_path)
+        FileUtils.mkdir_p(object_root)
         FileUtils.touch(object_directory.namaste_file)
         write_inventory
         object_directory

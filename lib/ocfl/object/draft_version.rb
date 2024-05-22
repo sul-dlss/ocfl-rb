@@ -5,10 +5,10 @@ module OCFL
     # A new OCFL version
     class DraftVersion
       # @params [Directory] object_directory
-      def initialize(object_directory:, overwrite_head: false)
+      def initialize(object_directory:, overwrite_head: false, state: {})
         @object_directory = object_directory
         @manifest = object_directory.inventory.manifest.dup
-        @state = {}
+        @state = state
 
         number = object_directory.head.delete_prefix("v").to_i
         @version_number = "v#{overwrite_head ? number : number + 1}"
@@ -38,14 +38,18 @@ module OCFL
       end
 
       def save
-        inventory = build_inventory
-        InventoryWriter.new(inventory:, path:).write
-        FileUtils.cp(path / "inventory.json", object_directory.object_root)
-        FileUtils.cp(path / "inventory.json.sha512", object_directory.object_root)
+        prepare_directory # only necessary if the version has no new content (deletes only)
+        write_inventory(build_inventory)
         object_directory.reload
       end
 
       private
+
+      def write_inventory(inventory)
+        InventoryWriter.new(inventory:, path:).write
+        FileUtils.cp(path / "inventory.json", object_directory.object_root)
+        FileUtils.cp(path / "inventory.json.sha512", object_directory.object_root)
+      end
 
       def copy_one(logical_file_path, incoming_path, destination_path)
         logical_file_path = File.join(destination_path, logical_file_path) unless destination_path.empty?
