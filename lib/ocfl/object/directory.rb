@@ -60,6 +60,7 @@ module OCFL
         @inventory = nil
         @errors = nil
         @version_inventory_errors = {}
+        true
       end
 
       def begin_new_version
