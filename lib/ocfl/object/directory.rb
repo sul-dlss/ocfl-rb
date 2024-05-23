@@ -17,9 +17,16 @@ module OCFL
 
       delegate :head, :versions, :manifest, to: :inventory
 
-      def path(version, filename)
+      def path(filepath:, version: nil)
         version = head if version == :head
-        relative_path = version_inventory(version).path(filename)
+        relative_path = if version
+                          version_inventory(version).path(filepath)
+                        else
+                          inventory.path(filepath)
+                        end
+
+        raise FileNotFound, "Path '#{filepath}' not found in #{version || "object"} inventory" if relative_path.nil?
+
         object_root / relative_path
       end
 

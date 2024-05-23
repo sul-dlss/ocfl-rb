@@ -13,7 +13,8 @@ RSpec.describe OCFL::Object::DirectoryBuilder do
 
       directory = builder.save
       expect(directory).to be_valid
-      expect(directory.path("v1", "Gemfile.lock")).to eq(Pathname.new(object_root) / "v1/content/Gemfile.lock")
+      expect(directory.path(version: "v1", filepath: "Gemfile.lock"))
+        .to eq(Pathname.new(object_root) / "v1/content/Gemfile.lock")
     end
   end
 
