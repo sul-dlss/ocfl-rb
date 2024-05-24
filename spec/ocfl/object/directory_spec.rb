@@ -98,12 +98,6 @@ RSpec.describe OCFL::Object::Directory do
       end
     end
 
-    context "when version is :head" do
-      it "returns the path from the most recent version's inventory" do
-        expect(directory.path(filepath: "ocfl.rbs", version: :head))
-          .to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
-      end
-    end
 
     context "when version is nil" do
       it "returns the path from the object's inventory" do
@@ -114,7 +108,7 @@ RSpec.describe OCFL::Object::Directory do
       context "when the filepath does not exist" do
         it "raises a FileNotFound exception" do
           expect { directory.path(filepath: "image.jp2") }
-            .to raise_error(OCFL::Object::FileNotFound, /Path 'image.jp2' not found in object inventory/)
+            .to raise_error(OCFL::Object::FileNotFound, /Path 'image.jp2' not found in v2 inventory/)
         end
       end
     end

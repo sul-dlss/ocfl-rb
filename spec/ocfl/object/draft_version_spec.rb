@@ -27,7 +27,7 @@ RSpec.describe OCFL::Object::DraftVersion do
         expect(directory).to be_valid
         expect(directory.path(version: "v2", filepath: "ocfl.rbs"))
           .to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
-        expect(directory.path(version: :head, filepath: "ocfl.rbs"))
+        expect(directory.path(filepath: "ocfl.rbs"))
           .to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
       end
     end
@@ -42,7 +42,7 @@ RSpec.describe OCFL::Object::DraftVersion do
         expect(directory).to be_valid
         expect(directory.path(version: "v2", filepath: "ocfl.rbs"))
           .to eq(Pathname.new(object_root) / "v2/#{content_directory}/ocfl.rbs")
-        expect(directory.path(version: :head, filepath: "ocfl.rbs"))
+        expect(directory.path(filepath: "ocfl.rbs"))
           .to eq(Pathname.new(object_root) / "v2/#{content_directory}/ocfl.rbs")
       end
     end
