@@ -65,10 +65,6 @@ module OCFL
       end
 
       def begin_new_version
-        DraftVersion.new(object_directory: self)
-      end
-
-      def clone_current_version
         DraftVersion.new(object_directory: self, state: head_inventory.state)
       end
 

@@ -50,10 +50,6 @@ directory.path(filepath: "ocfl.rbs")
 new_version = directory.overwrite_current_version
 new_version.copy_file('sig/ocfl.rbs')
 new_version.save
-
-new_version = directory.clone_current_version
-new_version.copy_file('Gemfile')
-new_version.save
 ```
 
 ## Development
