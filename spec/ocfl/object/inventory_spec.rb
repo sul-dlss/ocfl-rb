@@ -25,7 +25,7 @@ RSpec.describe OCFL::Object::Inventory do
         "versions": {
           "v1": {
             "created": "2018-10-02T12:00:00Z",
-            "message": "One file",
+            "message": "Two files",
             "state": {
               "7545b8...f67": [ "file.txt" ],
               "123456...fed": [ "other.txt" ]
@@ -37,9 +37,10 @@ RSpec.describe OCFL::Object::Inventory do
           },
           "v2": {
             "created": "2020-01-02T12:00:00Z",
-            "message": "Updated the file",
+            "message": "Updated file.txt",
             "state": {
-              "8656c9...178": [ "file.txt" ]
+              "8656c9...178": [ "file.txt" ],
+              "123456...fed": [ "other.txt" ]
             },
             "user": {
               "address": "mailto:alice@example.org",
@@ -48,9 +49,10 @@ RSpec.describe OCFL::Object::Inventory do
           },
           "v3": {
             "created": "2023-04-12T12:00:00Z",
-            "message": "Finally finished the file",
+            "message": "Finally finished file.txt",
             "state": {
-              "9767d0...289": [ "file.txt" ]
+              "9767d0...289": [ "file.txt" ],
+              "123456...fed": [ "other.txt" ]
             },
             "user": {
               "address": "mailto:alice@example.org",

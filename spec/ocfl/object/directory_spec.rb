@@ -98,13 +98,6 @@ RSpec.describe OCFL::Object::Directory do
       end
     end
 
-    context "when version is :head" do
-      it "returns the path from the most recent version's inventory" do
-        expect(directory.path(filepath: "ocfl.rbs", version: :head))
-          .to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
-      end
-    end
-
     context "when version is nil" do
       it "returns the path from the object's inventory" do
         expect(directory.path(filepath: "Gemfile.lock"))
@@ -114,7 +107,7 @@ RSpec.describe OCFL::Object::Directory do
       context "when the filepath does not exist" do
         it "raises a FileNotFound exception" do
           expect { directory.path(filepath: "image.jp2") }
-            .to raise_error(OCFL::Object::FileNotFound, /Path 'image.jp2' not found in object inventory/)
+            .to raise_error(OCFL::Object::FileNotFound, /Path 'image.jp2' not found in v2 inventory/)
         end
       end
     end
@@ -152,15 +145,14 @@ RSpec.describe OCFL::Object::Directory do
     end
   end
 
-  describe "#clone_current_version" do
+  describe "#begin_new_version" do
     let(:object_root) { File.join(temp_dir, "abc123") }
-
     let(:builder) { OCFL::Object::DirectoryBuilder.new(object_root:, id: "http://example.com/minimal") }
     let(:directory) do
       builder.copy_file("spec/file1.xml")
       builder.save
     end
-    let(:clone) { directory.clone_current_version }
+    let(:new_version) { directory.begin_new_version }
 
     context "with a file in the current directory" do
       let!(:before_keys) { directory.inventory.manifest.keys }
@@ -171,8 +163,8 @@ RSpec.describe OCFL::Object::Directory do
         FileUtils.rm("spec/file1.xml")
       end
 
-      it "copyies in all the files" do
-        expect { clone.save }.to change(directory, :head)
+      it "copies in the files from the previous version" do
+        expect { new_version.save }.to change(directory, :head)
         expect(directory).to be_valid
         expect(directory.inventory.manifest.keys).to eq before_keys
         expect(directory.inventory.manifest.values).to eq [["v1/content/file1.xml"]]

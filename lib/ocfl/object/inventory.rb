@@ -34,13 +34,11 @@ module OCFL
 
       # @return [String,nil] the path to the file relative to the object root. (e.g. v2/content/image.tiff)
       def path(logical_path)
-        matching_paths = manifest.values.flatten.select do |path|
-          path.match(%r{\Av\d+/#{content_directory}/#{logical_path}\z})
-        end
+        digest, = state.find { |_, logical_paths| logical_paths.include?(logical_path) }
 
-        return if matching_paths.empty?
+        return unless digest
 
-        matching_paths.max_by { |path| path[/\d+/].to_i }
+        manifest[digest].find { |content_path| content_path.match(%r{\Av\d+/#{content_directory}/#{logical_path}\z}) }
       end
 
       def head_version

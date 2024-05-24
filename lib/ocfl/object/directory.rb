@@ -18,14 +18,10 @@ module OCFL
       delegate :head, :versions, :manifest, to: :inventory
 
       def path(filepath:, version: nil)
-        version = head if version == :head
-        relative_path = if version
-                          version_inventory(version).path(filepath)
-                        else
-                          inventory.path(filepath)
-                        end
+        version ||= head
+        relative_path = version_inventory(version).path(filepath)
 
-        raise FileNotFound, "Path '#{filepath}' not found in #{version || "object"} inventory" if relative_path.nil?
+        raise FileNotFound, "Path '#{filepath}' not found in #{version} inventory" if relative_path.nil?
 
         object_root / relative_path
       end
@@ -69,10 +65,6 @@ module OCFL
       end
 
       def begin_new_version
-        DraftVersion.new(object_directory: self)
-      end
-
-      def clone_current_version
         DraftVersion.new(object_directory: self, state: head_inventory.state)
       end
 
