@@ -64,10 +64,17 @@ module OCFL
         true
       end
 
+      # Start a completely new version
       def begin_new_version
         DraftVersion.new(object_directory: self, state: head_inventory.state)
       end
 
+      # Get a handle for the head version
+      def reopen_head_version
+        DraftVersion.new(object_directory: self, overwrite_head: true, state: head_inventory.state)
+      end
+
+      # Get a handle that will replace the existing head version
       def overwrite_current_version
         DraftVersion.new(object_directory: self, overwrite_head: true)
       end

@@ -27,14 +27,38 @@ directory.exists?
 # => true
 directory.valid?
 # => true
+```
 
+### Versions
+
+There are three ways to get a version with an existing object directory.
+
+#### Start a new version
+```
 new_version = directory.begin_new_version
 new_version.copy_file('sig/ocfl.rbs')
 new_version.save
 
 directory.head
 # => 'v2'
+```
 
+#### Re-open the existing head version
+```
+new_version = directory.reopen_head_version
+new_version.copy_file('sig/ocfl.rbs')
+new_version.save
+```
+
+#### Overwrite the existing head version
+```
+new_version = directory.overwrite_current_version
+new_version.copy_file('sig/ocfl.rbs')
+new_version.save
+```
+
+### File paths
+```
 # List file names that were part of a given version
 directory.versions['v2'].file_names
 # => ["ocfl.rbs"]
@@ -47,9 +71,6 @@ directory.path(filepath: "ocfl.rbs", version: "v2")
 directory.path(filepath: "ocfl.rbs")
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
 
-new_version = directory.overwrite_current_version
-new_version.copy_file('sig/ocfl.rbs')
-new_version.save
 ```
 
 ## Development
