@@ -80,4 +80,40 @@ RSpec.describe OCFL::Object::DraftVersion do
       end
     end
   end
+
+  describe "#delete_file" do
+    let(:directory) { builder.save }
+    let(:version) { directory.begin_new_version }
+    let(:digest) { Digest::SHA512.file("Gemfile.lock").to_s }
+
+    context "with a file in the current version" do
+      let!(:file_path) do
+        version.copy_file("Gemfile.lock")
+        directory.object_root + version.manifest[digest].first
+      end
+
+      it "removes the file" do
+        expect { version.delete_file(digest) }.to change(file_path, :exist?).from(true).to(false)
+        expect(version.state).to be_empty
+        version.save # save prunes the manifest
+        expect(version.manifest).to be_empty
+      end
+    end
+
+    context "with a file in the previous version" do
+      let!(:file_path) do
+        version.copy_file("Gemfile.lock")
+        version.save
+        directory.object_root + version.manifest[digest].first
+      end
+
+      it "builds a valid object" do
+        new_version = directory.begin_new_version
+        new_version.delete_file(digest)
+        expect(file_path).to exist # Keep the file within the old version
+        expect(new_version.manifest).to include(digest) # It's still in the object (previous versions)
+        expect(new_version.state).to be_empty # but it's not in this version.
+      end
+    end
+  end
 end
