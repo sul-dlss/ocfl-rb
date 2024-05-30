@@ -8,7 +8,7 @@ RSpec.describe OCFL::Object::Inventory do
   let(:data) do
     OCFL::Object::InventoryLoader.load(file_name).value!
   end
-  let(:file_name) { "#{temp_dir}/inventory.json" }
+  let(:file_name) { "#{base_directory}/inventory.json" }
   let(:content) do
     <<~JSON
       {

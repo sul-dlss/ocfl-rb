@@ -4,7 +4,7 @@ RSpec.describe OCFL::Object::DraftVersion do
   include_context "with temp directory"
 
   let(:builder) { OCFL::Object::DirectoryBuilder.new(object_root:, id: "http://example.com/minimal") }
-  let(:object_root) { File.join(temp_dir, "abc123") }
+  let(:object_root) { File.join(base_directory, "abc123") }
 
   describe "#copy_file" do
     let(:directory) { builder.save }

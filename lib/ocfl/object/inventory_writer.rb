@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module OCFL
-  module Object
+  class Object
     # Writes a OCFL Inventory to json on disk
     class InventoryWriter
       def initialize(inventory:, path:)

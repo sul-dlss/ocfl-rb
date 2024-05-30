@@ -5,7 +5,7 @@ RSpec.describe OCFL::Object::DirectoryBuilder do
 
   include_context "with temp directory"
 
-  let(:object_root) { File.join(temp_dir, "abc123") }
+  let(:object_root) { File.join(base_directory, "abc123") }
 
   describe "#save" do
     it "builds a valid object with a file" do

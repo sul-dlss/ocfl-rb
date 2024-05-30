@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module OCFL
-  module Object
+  class Object
     # Represents the JSON file that stores the object inventory
     # https://ocfl.io/1.1/spec/#inventory
     class Inventory

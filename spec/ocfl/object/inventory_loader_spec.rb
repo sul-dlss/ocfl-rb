@@ -5,7 +5,7 @@ RSpec.describe OCFL::Object::InventoryLoader do
 
   include_context "with temp directory"
 
-  let(:file_name) { "#{temp_dir}/inventory.json" }
+  let(:file_name) { "#{base_directory}/inventory.json" }
 
   before { File.write(file_name, content) }
 

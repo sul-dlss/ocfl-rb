@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module OCFL
-  module Object
+  class Object
     # Checks to see that the inventory.json and it's checksum in a direcotory are valid
     class InventoryValidator
       def initialize(directory:)

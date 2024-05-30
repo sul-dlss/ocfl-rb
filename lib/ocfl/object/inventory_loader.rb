@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module OCFL
-  module Object
+  class Object
     # Loads and Inventory object from JSON
     class InventoryLoader
       include Dry::Monads[:result]
