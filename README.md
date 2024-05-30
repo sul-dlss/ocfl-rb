@@ -16,17 +16,25 @@ If bundler is not being used to manage dependencies, install the gem by executin
 ## Usage
 
 ```ruby
-directory = OCFL::Object::Directory.new(object_root: '/files/[object_root]')
-directory.exists?
+storage_root = OCFL::StorageRoot.new(base_directory: '/files', layout: OCFL::Layouts::DruidTree.new)
+storage_root.exists?
 # => false
-builder = OCFL::Object::DirectoryBuilder.new(object_root: 'spec/abc123', id: 'http://example.com/abc123')
-builder.copy_file('sig/ocfl.rbs', destination_path: 'ocfl/types/generated.rbs')
+storage_root.valid?
+# => false
 
-directory = builder.save
-directory.exists?
+storage_root.save
+storage_root.exists?
 # => true
-directory.valid?
+storage_root.valid?
 # => true
+
+object = storage_root.object('bc123df4567') # returns an instance of `OCFL::Object` (what used to be `OCFL::Object::Directory`)
+object.exists?
+# => false
+object.valid?
+# => true
+object.head
+# => 'v0'
 ```
 
 ### Versions
@@ -35,17 +43,17 @@ There are three ways to get a version with an existing object directory.
 
 #### Start a new version
 ```
-new_version = directory.begin_new_version
-new_version.copy_file('sig/ocfl.rbs')
+new_version = object.begin_new_version
+new_version.copy_file('sig/ocfl.rbs', destination_path: 'ocfl/types/generated.rbs')
 new_version.save
 
-directory.head
-# => 'v2'
+object.head
+# => 'v1'
 ```
 
 #### Modify the existing head version
 ```
-new_version = directory.head_version
+new_version = object.head_version
 new_version.delete_file('sample.txt')
 new_version.copy_file('sig/ocfl.rbs')
 new_version.save
@@ -53,7 +61,7 @@ new_version.save
 
 #### Overwrite the existing head version
 ```
-new_version = directory.overwrite_current_version
+new_version = object.overwrite_current_version
 new_version.copy_file('sig/ocfl.rbs')
 new_version.save
 ```
@@ -61,7 +69,7 @@ new_version.save
 ### File paths
 ```
 # List file names that were part of a given version
-directory.versions['v2'].file_names
+object.versions['v2'].file_names
 # => ["ocfl.rbs"]
 
 # Or on the head version
@@ -69,11 +77,11 @@ directory.head_version.file_names
 # => ["ocfl.rbs"]
 
 # Get the path of a file in a given version
-directory.path(filepath: "ocfl.rbs", version: "v2")
+object.path(filepath: "ocfl.rbs", version: "v2")
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
 
 # Get the path of a file in the head version
-directory.path(filepath: "ocfl.rbs")
+object.path(filepath: "ocfl.rbs")
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
 
 ```
