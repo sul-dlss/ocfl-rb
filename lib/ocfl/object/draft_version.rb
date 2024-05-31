@@ -27,7 +27,7 @@ module OCFL
 
       def copy_file(incoming_path, destination_path: "")
         prepare_content_directory
-        copy_one(File.basename(incoming_path), incoming_path, destination_path)
+        copy_one(destination_path.presence || File.basename(incoming_path), incoming_path)
       end
 
       # Note, this only removes the file from this version. Previous versions may still use it.
@@ -45,7 +45,10 @@ module OCFL
         prepare_content_directory
         incoming_path = incoming_path.delete_suffix("/")
         Dir.glob("#{incoming_path}/**/*").reject { |fn| File.directory?(fn) }.each do |file|
-          copy_one(file.delete_prefix(incoming_path).delete_prefix("/"), file, destination_path)
+          logical_file_path = file.delete_prefix(incoming_path).delete_prefix("/")
+          logical_file_path = File.join(destination_path, logical_file_path) unless destination_path.empty?
+
+          copy_one(logical_file_path, file)
         end
       end
 
@@ -67,8 +70,9 @@ module OCFL
         FileUtils.cp(path / "inventory.json.sha512", object_directory.object_root)
       end
 
-      def copy_one(logical_file_path, incoming_path, destination_path)
-        logical_file_path = File.join(destination_path, logical_file_path) unless destination_path.empty?
+      # @param [String] logical_file_path where we're going to store the file (e.g. 'object/directory_builder_spec.rb')
+      # @param [String] incoming_path where's this file from (e.g. 'spec/ocfl/object/directory_builder_spec.rb')
+      def copy_one(logical_file_path, incoming_path)
         add(incoming_path, logical_file_path:)
         parent_dir = (content_path / logical_file_path).parent
         FileUtils.mkdir_p(parent_dir) unless parent_dir == content_path
