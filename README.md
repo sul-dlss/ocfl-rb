@@ -43,9 +43,9 @@ directory.head
 # => 'v2'
 ```
 
-#### Re-open the existing head version
+#### Modify the existing head version
 ```
-new_version = directory.reopen_head_version
+new_version = directory.head_version
 new_version.delete_file('cb6c8557fc724c636929775212c5194984d68cb1508a1')
 new_version.copy_file('sig/ocfl.rbs')
 new_version.save
@@ -65,7 +65,7 @@ directory.versions['v2'].file_names
 # => ["ocfl.rbs"]
 
 # Or on the head version
-directory.reopen_head_version.file_names
+directory.head_version.file_names
 # => ["ocfl.rbs"]
 
 # Get the path of a file in a given version
