@@ -21,6 +21,23 @@ RSpec.describe OCFL::Object::DraftVersion do
       end
     end
 
+    context "with a file that is a duplicate" do
+      before do
+        FileUtils.copy("Gemfile.lock", "tmp/Gemfile.bak")
+      end
+
+      it "builds a valid object" do
+        expect do
+          new_version.copy_file("Gemfile.lock")
+          new_version.copy_file("tmp/Gemfile.bak", destination_path: "Gemfile.bak")
+          new_version.save
+        end.to change(directory, :head).from("v1").to("v2")
+
+        expect(new_version.file_names).to eq ["Gemfile.lock", "Gemfile.bak"]
+        expect(directory).to be_valid
+      end
+    end
+
     context "with a file a sub directory" do
       it "builds a valid object" do
         new_version.copy_file("sig/ocfl.rbs")
