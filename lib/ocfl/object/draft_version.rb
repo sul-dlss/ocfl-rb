@@ -21,7 +21,9 @@ module OCFL
 
       def move_file(incoming_path)
         prepare_content_directory
-        add(incoming_path)
+        already_stored = add(incoming_path)
+        return if already_stored
+
         FileUtils.mv(incoming_path, content_path)
       end
 
@@ -80,18 +82,26 @@ module OCFL
       # @param [String] logical_file_path where we're going to store the file (e.g. 'object/directory_builder_spec.rb')
       # @param [String] incoming_path where's this file from (e.g. 'spec/ocfl/object/directory_builder_spec.rb')
       def copy_one(logical_file_path, incoming_path)
-        add(incoming_path, logical_file_path:)
+        already_stored = add(incoming_path, logical_file_path:)
+        return if already_stored
+
         parent_dir = (content_path / logical_file_path).parent
         FileUtils.mkdir_p(parent_dir) unless parent_dir == content_path
         FileUtils.cp(incoming_path, content_path / logical_file_path)
       end
 
+      # @return [Boolean] true if the file already existed in this object. If false, the object must be
+      #                   moved to the content directory.
       def add(incoming_path, logical_file_path: File.basename(incoming_path))
         digest = Digest::SHA512.file(incoming_path).to_s
         version_content_path = content_path.relative_path_from(object_directory.object_root)
         file_path_relative_to_root = (version_content_path / logical_file_path).to_s
-        @manifest[digest] = [file_path_relative_to_root]
-        @state[digest] = [logical_file_path]
+        result = @manifest.key?(digest)
+        @manifest[digest] ||= []
+        @state[digest] ||= []
+        @manifest[digest].push(file_path_relative_to_root)
+        @state[digest].push(logical_file_path)
+        result
       end
 
       def prepare_content_directory
