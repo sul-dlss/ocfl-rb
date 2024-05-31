@@ -33,12 +33,12 @@ module OCFL
 
       def create_object_directory
         FileUtils.mkdir_p(object_root)
+        FileUtils.touch(object_directory.namaste_file) unless File.exist?(object_directory.namaste_file)
       end
 
       # @return [Directory]
       def save
-        FileUtils.mkdir_p(object_root)
-        FileUtils.touch(object_directory.namaste_file)
+        create_object_directory
         write_inventory
         object_directory
       end
