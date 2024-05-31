@@ -20,7 +20,7 @@ directory = OCFL::Object::Directory.new(object_root: '/files/[object_root]')
 directory.exists?
 # => false
 builder = OCFL::Object::DirectoryBuilder.new(object_root: 'spec/abc123', id: 'http://example.com/abc123')
-builder.copy_file('sig/ocfl.rbs')
+builder.copy_file('sig/ocfl.rbs', destination_path: 'ocfl/types/generated.rbs')
 
 directory = builder.save
 directory.exists?

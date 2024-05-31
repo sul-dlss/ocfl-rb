@@ -32,6 +32,15 @@ RSpec.describe OCFL::Object::DraftVersion do
       end
     end
 
+    context "with a destination path" do
+      it "builds a valid object" do
+        new_version.copy_file("sig/ocfl.rbs", destination_path: "ocfl/types/generated.rbs")
+        new_version.save
+        expect(directory.path(version: "v2", filepath: "ocfl/types/generated.rbs"))
+          .to eq(Pathname.new(object_root) / "v2/content/ocfl/types/generated.rbs")
+      end
+    end
+
     context "when builder is given a content directory" do
       let(:builder) { OCFL::Object::DirectoryBuilder.new(object_root:, id: "http://example.com/minimal", content_directory:) }
       let(:content_directory) { "stuff" }
