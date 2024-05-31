@@ -70,7 +70,7 @@ module OCFL
       end
 
       # Get a handle for the head version
-      def reopen_head_version
+      def head_version
         DraftVersion.new(object_directory: self, overwrite_head: true, state: head_inventory.state)
       end
 

@@ -173,14 +173,14 @@ RSpec.describe OCFL::Object::Directory do
     end
   end
 
-  describe "#reopen_head_version" do
+  describe "#head_version" do
     let(:object_root) { File.join(temp_dir, "abc123") }
     let(:builder) { OCFL::Object::DirectoryBuilder.new(object_root:, id: "http://example.com/minimal") }
     let(:directory) do
       builder.copy_file("spec/file1.xml")
       builder.save
     end
-    let(:new_version) { directory.reopen_head_version }
+    let(:new_version) { directory.head_version }
 
     context "with a file in the current directory" do
       let!(:before_keys) { directory.inventory.manifest.keys }
