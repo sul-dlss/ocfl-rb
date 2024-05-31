@@ -16,7 +16,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 ## Usage
 
 ```ruby
-storage_root = OCFL::StorageRoot.new(base_directory: '/files', layout: OCFL::Layouts::DruidTree.new)
+storage_root = OCFL::StorageRoot.new(base_directory: '/files')
 storage_root.exists?
 # => false
 storage_root.valid?
@@ -28,18 +28,20 @@ storage_root.exists?
 storage_root.valid?
 # => true
 
-object = storage_root.object('bc123df4567') # returns an instance of `OCFL::Object` (what used to be `OCFL::Object::Directory`)
+object = storage_root.object('bc123df4567') # returns an instance of `OCFL::Object`
 object.exists?
 # => false
 object.valid?
-# => true
+# => false
 object.head
 # => 'v0'
 ```
 
 ### Versions
 
-There are three ways to get a version with an existing object directory.
+To build out an object, you'll need to create one or more versions.
+
+There are three ways to get a version within an existing object directory.
 
 #### Start a new version
 ```
@@ -47,6 +49,10 @@ new_version = object.begin_new_version
 new_version.copy_file('sig/ocfl.rbs', destination_path: 'ocfl/types/generated.rbs')
 new_version.save
 
+object.exists?
+# => true
+object.valid?
+# => true
 object.head
 # => 'v1'
 ```
@@ -69,7 +75,7 @@ new_version.save
 ### File paths
 ```
 # List file names that were part of a given version
-object.versions['v2'].file_names
+object.versions['v1'].file_names
 # => ["ocfl.rbs"]
 
 # Or on the head version
@@ -77,13 +83,12 @@ directory.head_version.file_names
 # => ["ocfl.rbs"]
 
 # Get the path of a file in a given version
-object.path(filepath: "ocfl.rbs", version: "v2")
-# => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
+object.path(filepath: "ocfl.rbs", version: "v1")
+# => <Pathname:/files/[object_root]/v1/content/ocfl.rbs>
 
 # Get the path of a file in the head version
 object.path(filepath: "ocfl.rbs")
-# => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>
-
+# => <Pathname:/files/[object_root]/v1/content/ocfl.rbs>
 ```
 
 ## Development

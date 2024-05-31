@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-RSpec.describe OCFL::Object::Inventory do
+RSpec.describe OCFL::Inventory do
   subject(:inventory) { described_class.new(data:) }
 
   include_context "with temp directory"
 
   let(:data) do
-    OCFL::Object::InventoryLoader.load(file_name).value!
+    OCFL::InventoryLoader.load(file_name).value!
   end
   let(:file_name) { "#{base_directory}/inventory.json" }
   let(:content) do

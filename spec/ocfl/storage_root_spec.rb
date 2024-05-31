@@ -3,6 +3,8 @@
 RSpec.describe OCFL::StorageRoot do
   subject(:storage_root) { described_class.new(base_directory:) }
 
+  let(:base_directory) { shared_base_directory }
+
   include_context "with temp directory"
 
   describe "#base_directory" do
@@ -25,7 +27,7 @@ RSpec.describe OCFL::StorageRoot do
     end
 
     context "when directory is missing" do
-      let(:base_directory) { "tmp/fake/path" }
+      before { FileUtils.rm_rf(base_directory) }
 
       it "returns false" do
         expect(storage_root).not_to exist
@@ -35,14 +37,14 @@ RSpec.describe OCFL::StorageRoot do
 
   describe "#valid?" do
     context "when namaste file is present" do
-      before { FileUtils.touch("#{base_directory}/0=ocfl_1.1") }
-
       it "returns true" do
         expect(storage_root).to be_valid
       end
     end
 
     context "when namaste file is missing" do
+      before { FileUtils.rm_f("#{base_directory}/0=ocfl_1.1") }
+
       it "returns false" do
         expect(storage_root).not_to be_valid
       end
@@ -51,22 +53,15 @@ RSpec.describe OCFL::StorageRoot do
 
   describe "#save" do
     context "when directory and namaste present" do
-      before { FileUtils.touch("#{base_directory}/0=ocfl_1.1") }
-
       it "returns nil" do
         expect(storage_root.save).to be_nil
       end
     end
 
     context "when directory is missing" do
-      let(:base_directory) { "tmp/fake/path" }
-
-      before { allow(FileUtils).to receive(:mkdir_p).and_call_original }
-
-      around do |example|
-        example.run
-      ensure
+      before do
         FileUtils.rm_rf(base_directory)
+        allow(FileUtils).to receive(:mkdir_p).and_call_original
       end
 
       it "creates the directory and returns true" do
@@ -76,7 +71,10 @@ RSpec.describe OCFL::StorageRoot do
     end
 
     context "when namaste file is missing" do
-      before { allow(FileUtils).to receive(:touch).and_call_original }
+      before do
+        FileUtils.rm_f("#{base_directory}/0=ocfl_1.1")
+        allow(FileUtils).to receive(:touch).and_call_original
+      end
 
       it "creates the namaste file and returns true" do
         expect(storage_root.save).to be true

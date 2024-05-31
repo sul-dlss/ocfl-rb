@@ -14,11 +14,11 @@ module OCFL
     end
 
     def exists?
-      File.directory?(base_directory)
+      base_directory.directory?
     end
 
     def valid?
-      File.exist?(namaste_file)
+      namaste_file.exist?
     end
 
     def save
@@ -31,10 +31,10 @@ module OCFL
       true
     end
 
-    def object(identifier)
+    def object(identifier, content_directory = nil)
       root = base_directory / path_to(identifier)
 
-      Object.new(root:)
+      Object.new(identifier:, root:, content_directory:)
     end
 
     private

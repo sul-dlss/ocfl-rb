@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe OCFL::Object::Version do
+RSpec.describe OCFL::ObjectVersion do
   let(:version) do
     described_class.new(name: "v2", created: Time.parse("1992-09-22").iso8601,
                         state: {

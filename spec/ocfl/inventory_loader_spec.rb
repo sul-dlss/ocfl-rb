@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe OCFL::Object::InventoryLoader do
+RSpec.describe OCFL::InventoryLoader do
   subject(:data) { described_class.load(file_name) }
 
   include_context "with temp directory"

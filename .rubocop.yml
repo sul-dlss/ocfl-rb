@@ -31,6 +31,10 @@ RSpec/MultipleExpectations:
 RSpec/ExampleLength:
   Max: 10
 
+RSpec/InstanceVariable:
+  Exclude:
+    - spec/support/temp_directory.rb
+
 RSpec/MultipleMemoizedHelpers:
   Max: 8
 
