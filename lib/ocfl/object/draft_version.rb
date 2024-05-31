@@ -30,8 +30,15 @@ module OCFL
         copy_one(destination_path.presence || File.basename(incoming_path), incoming_path)
       end
 
+      def digest_for_filename(filename)
+        state.find { |_, filenames| filenames.include?(filename) }&.first
+      end
+
       # Note, this only removes the file from this version. Previous versions may still use it.
-      def delete_file(sha512_digest)
+      def delete_file(filename)
+        sha512_digest = digest_for_filename(filename)
+        raise "Unknown file: #{filename}" unless sha512_digest
+
         state.delete(sha512_digest)
         # If the manifest points at the current content directory, then we can delete it.
         file_paths = manifest[sha512_digest]

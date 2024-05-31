@@ -46,7 +46,7 @@ directory.head
 #### Modify the existing head version
 ```
 new_version = directory.head_version
-new_version.delete_file('cb6c8557fc724c636929775212c5194984d68cb1508a1')
+new_version.delete_file('sample.txt')
 new_version.copy_file('sig/ocfl.rbs')
 new_version.save
 ```
