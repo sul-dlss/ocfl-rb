@@ -64,6 +64,10 @@ new_version.save
 directory.versions['v2'].file_names
 # => ["ocfl.rbs"]
 
+# Or on the head version
+directory.reopen_head_version.file_names
+# => ["ocfl.rbs"]
+
 # Get the path of a file in a given version
 directory.path(filepath: "ocfl.rbs", version: "v2")
 # => <Pathname:/files/[object_root]/v2/content/ocfl.rbs>

@@ -16,6 +16,7 @@ RSpec.describe OCFL::Object::DraftVersion do
           new_version.copy_file("Gemfile.lock")
           new_version.save
         end.to change(directory, :head).from("v1").to("v2")
+        expect(new_version.file_names).to eq ["Gemfile.lock"]
         expect(directory).to be_valid
       end
     end
@@ -29,6 +30,7 @@ RSpec.describe OCFL::Object::DraftVersion do
           .to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
         expect(directory.path(filepath: "ocfl.rbs"))
           .to eq(Pathname.new(object_root) / "v2/content/ocfl.rbs")
+        expect(new_version.file_names).to eq ["ocfl.rbs"]
       end
     end
 
@@ -95,6 +97,7 @@ RSpec.describe OCFL::Object::DraftVersion do
       it "removes the file" do
         expect { version.delete_file(digest) }.to change(file_path, :exist?).from(true).to(false)
         expect(version.state).to be_empty
+        expect(version.file_names).to be_empty
         version.save # save prunes the manifest
         expect(version.manifest).to be_empty
       end

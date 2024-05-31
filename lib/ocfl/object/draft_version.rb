@@ -17,6 +17,8 @@ module OCFL
 
       attr_reader :object_directory, :manifest, :state, :version_number
 
+      delegate :file_names, to: :to_version_struct
+
       def move_file(incoming_path)
         prepare_content_directory
         add(incoming_path)
@@ -51,6 +53,10 @@ module OCFL
         prepare_directory # only necessary if the version has no new content (deletes only)
         write_inventory(build_inventory)
         object_directory.reload
+      end
+
+      def to_version_struct
+        Version.new(state:, created: Time.now.utc.iso8601)
       end
 
       private
@@ -112,7 +118,7 @@ module OCFL
       # This gives the update list of versions. The old list plus this new one.
       # @param [Hash] old_versions the versions prior to this one.
       def versions(old_versions)
-        old_versions.merge(version_number => Version.new(created: Time.now.utc.iso8601, state: @state))
+        old_versions.merge(version_number => to_version_struct)
       end
 
       # The manifest after unused SHAs have been filtered out.
