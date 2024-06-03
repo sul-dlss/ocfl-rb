@@ -16,6 +16,8 @@ Style/StringLiteralsInInterpolation:
 
 Layout/LineLength:
   Max: 120
+  Exclude:
+   - spec/support/digests.rb
 
 Metrics/BlockLength:
   AllowedMethods:
