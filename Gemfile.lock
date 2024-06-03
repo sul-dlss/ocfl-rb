@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ocfl (0.8.1)
+    ocfl (0.9.0)
       activesupport (>= 7.0)
       dry-monads (~> 1.6)
       dry-schema (~> 1.13)
