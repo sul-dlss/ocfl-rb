@@ -3,19 +3,17 @@
 RSpec.describe OCFL::StorageRoot do
   subject(:storage_root) { described_class.new(base_directory:) }
 
-  let(:base_directory) { shared_base_directory }
-
   include_context "with temp directory"
 
   describe "#base_directory" do
     it "returns the user-supplied base directory" do
-      expect(storage_root.base_directory.to_path).to eq(base_directory)
+      expect(storage_root.base_directory).to eq(base_directory)
     end
   end
 
   describe "#layout" do
     it "hard-codes a druid-tree layout" do
-      expect(storage_root.layout).to eq(OCFL::Layouts::DruidTree)
+      expect(storage_root.layout).to be_a(OCFL::Layouts::DruidTree)
     end
   end
 
@@ -62,23 +60,35 @@ RSpec.describe OCFL::StorageRoot do
       before do
         FileUtils.rm_rf(base_directory)
         allow(FileUtils).to receive(:mkdir_p).and_call_original
+        allow(FileUtils).to receive(:cp).and_call_original
+        allow(storage_root.layout).to receive(:save).and_call_original
       end
 
       it "creates the directory and returns true" do
         expect(storage_root.save).to be true
-        expect(FileUtils).to have_received(:mkdir_p).once
+        expect(FileUtils).to have_received(:mkdir_p).with(Pathname.new(base_directory)).once
+        expect(FileUtils).to have_received(:mkdir_p)
+          .with(Pathname.new(base_directory) / "extensions" / "0010-differential-n-tuple-omit-prefix-storage-layout")
+          .once
+        expect(FileUtils).to have_received(:cp).once
+        expect(storage_root.layout).to have_received(:save).once
       end
     end
 
+    # layout.save
     context "when namaste file is missing" do
       before do
         FileUtils.rm_f("#{base_directory}/0=ocfl_1.1")
         allow(FileUtils).to receive(:touch).and_call_original
+        allow(FileUtils).to receive(:cp).and_call_original
+        allow(storage_root.layout).to receive(:save).and_call_original
       end
 
       it "creates the namaste file and returns true" do
         expect(storage_root.save).to be true
         expect(FileUtils).to have_received(:touch).once
+        expect(FileUtils).to have_received(:cp).once
+        expect(storage_root.layout).to have_received(:save).once
       end
     end
   end
