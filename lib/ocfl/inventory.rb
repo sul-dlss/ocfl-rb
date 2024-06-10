@@ -18,6 +18,7 @@ module OCFL
       attribute :manifest, Types::Hash
     end
 
+    # @param [InventoryStruct] data
     def initialize(data:)
       @data = data
     end
@@ -33,6 +34,8 @@ module OCFL
 
     # @return [String,nil] the path to the file relative to the object root. (e.g. v2/content/image.tiff)
     def path(logical_path)
+      return unless head_version # object does not exist on disk
+
       digest, = state.find { |_, logical_paths| logical_paths.include?(logical_path) }
 
       return unless digest
