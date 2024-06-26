@@ -4,13 +4,14 @@ module OCFL
   # An OCFL Storage Root is the base directory of an OCFL storage layout.
   # https://ocfl.io/1.1/spec/#storage-root
   class StorageRoot
-    attr_reader :base_directory, :layout
+    LAYOUT_FILE = "ocfl_layout.json"
+    SPECIFICATION_FILE = "ocfl_1.1.md"
 
-    delegate :path_to, to: :layout
+    attr_reader :base_directory, :layout
 
     def initialize(base_directory:)
       @base_directory = Pathname.new(base_directory)
-      @layout = Layouts::DruidTree
+      @layout = Layouts::DruidTree.new(base_directory: @base_directory)
     end
 
     def exists?
@@ -22,17 +23,18 @@ module OCFL
     end
 
     def save
-      # TODO: optionally write the OCFL 1.1 spec
-      # TODO: optionally write any given extensions (like the TBD druid-tree layout)
       return if exists? && valid?
 
       FileUtils.mkdir_p(base_directory)
       FileUtils.touch(namaste_file)
+      FileUtils.cp(OCFL.docs_path / SPECIFICATION_FILE,
+                   base_directory / SPECIFICATION_FILE)
+      layout.save
       true
     end
 
     def object(identifier, content_directory = nil)
-      root = base_directory / path_to(identifier)
+      root = base_directory / layout.path_to(identifier)
 
       Object.new(identifier:, root:, content_directory:)
     end
