@@ -75,7 +75,7 @@ GEM
     irb (1.12.0)
       rdoc
       reline (>= 0.4.2)
-    json (2.7.2)
+    json (2.7.4)
     language_server-protocol (3.17.0.3)
     logger (1.6.1)
     minitest (5.25.1)
@@ -123,7 +123,7 @@ GEM
       rubocop-ast (>= 1.31.1, < 2.0)
     rubocop-rake (0.6.0)
       rubocop (~> 1.0)
-    rubocop-rspec (3.1.0)
+    rubocop-rspec (3.2.0)
       rubocop (~> 1.61)
     ruby-progressbar (1.13.0)
     securerandom (0.3.1)
@@ -145,7 +145,7 @@ DEPENDENCIES
   rubocop (~> 1.67)
   rubocop-performance (~> 1.22)
   rubocop-rake (~> 0.6.0)
-  rubocop-rspec (~> 3.1)
+  rubocop-rspec (~> 3.2)
 
 BUNDLED WITH
    2.5.10
