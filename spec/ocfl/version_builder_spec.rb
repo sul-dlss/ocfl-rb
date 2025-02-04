@@ -43,9 +43,9 @@ RSpec.describe OCFL::VersionBuilder do
         new_version.save
         expect(object).to be_valid
         expect(object.path(version: "v1", filepath: "ocfl.rbs"))
-          .to eq(Pathname.new(object.root) / "v1/content/ocfl.rbs")
+          .to eq(Pathname.new(object.root) / "v1/content/#{OCFL_RBS_DIGEST}")
         expect(object.path(filepath: "ocfl.rbs"))
-          .to eq(Pathname.new(object.root) / "v1/content/ocfl.rbs")
+          .to eq(Pathname.new(object.root) / "v1/content/#{OCFL_RBS_DIGEST}")
         expect(new_version.file_names).to eq ["ocfl.rbs"]
       end
     end
@@ -55,7 +55,7 @@ RSpec.describe OCFL::VersionBuilder do
         new_version.copy_file("sig/ocfl.rbs", destination_path: "ocfl/types/generated.rbs")
         new_version.save
         expect(object.path(version: "v1", filepath: "ocfl/types/generated.rbs"))
-          .to eq(Pathname.new(object.root) / "v1/content/ocfl/types/generated.rbs")
+          .to eq(Pathname.new(object.root) / "v1/content/#{OCFL_RBS_DIGEST}")
       end
     end
 
@@ -68,9 +68,27 @@ RSpec.describe OCFL::VersionBuilder do
         new_version.save
         expect(object).to be_valid
         expect(object.path(version: "v1", filepath: "ocfl.rbs"))
-          .to eq(Pathname.new(object.root) / "v1/#{content_directory}/ocfl.rbs")
+          .to eq(Pathname.new(object.root) / "v1/#{content_directory}/#{OCFL_RBS_DIGEST}")
         expect(object.path(filepath: "ocfl.rbs"))
-          .to eq(Pathname.new(object.root) / "v1/#{content_directory}/ocfl.rbs")
+          .to eq(Pathname.new(object.root) / "v1/#{content_directory}/#{OCFL_RBS_DIGEST}")
+      end
+    end
+
+    context "with a logical path that already exists, but with a different file" do
+      let(:original_path) do
+        new_version.copy_file("sig/ocfl.rbs", destination_path: "file1.txt")
+        new_version.save
+        object.path(version: "v1", filepath: "file1.txt")
+      end
+
+      it "builds a valid object" do
+        expect(original_path).to exist
+        new_version.copy_file("spec/fixtures/files/file1.txt", destination_path: "file1.txt")
+        new_version.save
+        expect(object.path(version: "v1", filepath: "file1.txt"))
+          .to eq(Pathname.new(object.root) / "v1/content/#{FILE1_TXT_DIGEST}")
+        expect(original_path).not_to exist
+        expect(object).to be_valid
       end
     end
   end
@@ -81,12 +99,12 @@ RSpec.describe OCFL::VersionBuilder do
     context "without a destination path" do
       it "builds a valid object" do
         expect do
-          new_version.copy_recursive("spec/ocfl/")
+          new_version.copy_recursive("spec/fixtures/")
           new_version.save
         end.to change(object, :head).from("v0").to("v1")
-        expect(object.versions["v1"].state.values.flatten).to include("version_builder_spec.rb")
-        expect(object.manifest.values.flatten).to include("v1/content/version_builder_spec.rb")
-        expect(File.exist?("#{object.root}/v1/content/version_builder_spec.rb")).to be true
+        expect(object.versions["v1"].state.values.flatten).to include("files/file1.txt")
+        expect(object.manifest.values.flatten).to include("v1/content/#{FILE1_TXT_DIGEST}")
+        expect(File.exist?("#{object.root}/v1/content/#{FILE1_TXT_DIGEST}")).to be true
 
         expect(object).to be_valid
       end
@@ -95,12 +113,12 @@ RSpec.describe OCFL::VersionBuilder do
     context "with a destination path" do
       it "builds a valid object" do
         expect do
-          new_version.copy_recursive("spec/ocfl/", destination_path: "data/")
+          new_version.copy_recursive("spec/fixtures/", destination_path: "data/")
           new_version.save
         end.to change(object, :head).from("v0").to("v1")
-        expect(object.versions["v1"].state.values.flatten).to include("data/version_builder_spec.rb")
-        expect(object.manifest.values.flatten).to include("v1/content/data/version_builder_spec.rb")
-        expect(File.exist?("#{object.root}/v1/content/data/version_builder_spec.rb")).to be true
+        expect(object.versions["v1"].state.values.flatten).to include("data/file2.txt")
+        expect(object.manifest.values.flatten).to include("v1/content/#{FILE2_TXT_DIGEST}")
+        expect(File.exist?("#{object.root}/v1/content/#{FILE2_TXT_DIGEST}")).to be true
 
         expect(object).to be_valid
       end
