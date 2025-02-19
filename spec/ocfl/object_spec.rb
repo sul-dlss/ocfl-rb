@@ -12,6 +12,28 @@ RSpec.describe OCFL::Object do
 
   include_context "with temp directory"
 
+  describe "#initialize" do
+    context "when content_directory is provided" do
+      subject(:object) { described_class.new(root: object_root, identifier:, content_directory:) }
+
+      let(:content_directory) { "my_documents" }
+
+      it "uses the content_directory param when instantiating an inventory" do
+        expect(object.inventory.content_directory).to eq(content_directory)
+      end
+    end
+
+    context "when digest_algorithm is provided" do
+      subject(:object) { described_class.new(root: object_root, identifier:, digest_algorithm:) }
+
+      let(:digest_algorithm) { "md5" }
+
+      it "uses the digest_algorithm param when instantiating an inventory" do
+        expect(object.inventory.data.digestAlgorithm).to eq(digest_algorithm)
+      end
+    end
+  end
+
   describe "#exists?" do
     context "when the namaste file exists" do
       before { FileUtils.touch("#{object_root}/0=ocfl_object_1.1") }
