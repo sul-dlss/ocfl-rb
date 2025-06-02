@@ -6,7 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 gem "debug"
-gem "rake", "~> 13.2"
+gem "rake", "~> 13.3"
 gem "rspec", "~> 3.0"
 gem "rubocop", "~> 1.75"
 gem "rubocop-performance", "~> 1.25"
