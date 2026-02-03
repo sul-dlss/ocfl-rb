@@ -37,10 +37,9 @@ module OCFL
       return unless head_version # object does not exist on disk
 
       digest, = state.find { |_, logical_paths| logical_paths.include?(logical_path) }
-
       return unless digest
 
-      manifest[digest].find { |content_path| content_path.match(%r{\Av\d+/#{content_directory}/#{logical_path}\z}) }
+      manifest[digest]&.first
     end
 
     def head_version
