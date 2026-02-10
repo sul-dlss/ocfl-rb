@@ -37,12 +37,12 @@ module OCFL
 
     # Note, this only removes the file from this version. Previous versions may still use it.
     def delete_file(filename)
-      sha512_digest = digest_for_filename(filename)
-      raise "Unknown file: #{filename}" unless sha512_digest
+      checksum_digest = digest_for_filename(filename)
+      raise "Unknown file: #{filename}" unless checksum_digest
 
-      state.delete(sha512_digest)
+      state.delete(checksum_digest)
       # If the manifest points at the current content directory, then we can delete it.
-      file_paths = manifest[sha512_digest]
+      file_paths = manifest[checksum_digest]
       return unless file_paths.all? { |path| path.start_with?("#{version_number}/") }
 
       File.unlink (object.root + file_paths.first).to_s
@@ -62,20 +62,24 @@ module OCFL
 
     def save
       prepare_directory # only necessary if the version has no new content (deletes only)
-      write_inventory(build_inventory)
+      write_inventory(build_inventory_struct)
       object.reload
     end
 
     private
+
+    def checksum
+      @checksum ||= Checksum.new(object.inventory.data.digestAlgorithm)
+    end
 
     def to_version_struct
       ObjectVersion.new(state:, created: Time.now.utc.iso8601)
     end
 
     def write_inventory(inventory)
-      InventoryWriter.new(inventory:, path:).write
+      InventoryWriter.new(inventory:, path:, checksum:).write
       FileUtils.cp(path / "inventory.json", object.root)
-      FileUtils.cp(path / "inventory.json.sha512", object.root)
+      FileUtils.cp(path / "inventory.json.#{checksum.type}", object.root)
     end
 
     # @param [String] logical_file_path where we're going to store the file (e.g. 'object/directory_builder_spec.rb')
@@ -91,8 +95,9 @@ module OCFL
 
     # @return [Boolean] true if the file already existed in this object. If false, the object must be
     #                   moved to the content directory.
+    # rubocop:disable Metrics/AbcSize
     def add(incoming_path, logical_file_path: File.basename(incoming_path))
-      digest = Digest::SHA512.file(incoming_path).to_s
+      digest = checksum.file(incoming_path).to_s
       version_content_path = content_path.relative_path_from(object.root)
       file_path_relative_to_root = (version_content_path / logical_file_path).to_s
       result = @manifest.key?(digest)
@@ -102,6 +107,7 @@ module OCFL
       @state[digest].push(logical_file_path)
       result
     end
+    # rubocop:enable Metrics/AbcSize
 
     def prepare_content_directory
       prepare_directory
@@ -127,7 +133,7 @@ module OCFL
       object.root / version_number
     end
 
-    def build_inventory
+    def build_inventory_struct
       old_data = object.inventory.data
       versions = versions(old_data.versions)
 
