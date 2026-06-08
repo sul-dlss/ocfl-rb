@@ -84,7 +84,7 @@ GEM
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (2.19.7)
+    json (2.19.8)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
@@ -144,9 +144,10 @@ GEM
     rubocop-rake (0.7.1)
       lint_roller (~> 1.1)
       rubocop (>= 1.72.1)
-    rubocop-rspec (3.9.0)
+    rubocop-rspec (3.10.2)
       lint_roller (~> 1.1)
-      rubocop (~> 1.81)
+      regexp_parser (>= 2.0)
+      rubocop (~> 1.86, >= 1.86.2)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
     stringio (3.2.0)
@@ -170,7 +171,7 @@ DEPENDENCIES
   rubocop (~> 1.87)
   rubocop-performance (~> 1.26)
   rubocop-rake (~> 0.7.1)
-  rubocop-rspec (~> 3.9)
+  rubocop-rspec (~> 3.10)
 
 BUNDLED WITH
    2.5.10
