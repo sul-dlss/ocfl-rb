@@ -152,4 +152,40 @@ RSpec.describe OCFL::VersionBuilder do
       end
     end
   end
+
+  describe "integration test" do
+    let(:new_version) { object.begin_new_version }
+
+    before do
+      FileUtils.copy("Gemfile.lock", "tmp/Gemfile.bak")
+    end
+
+    it "builds a valid object" do
+      new_version.copy_file("tmp/Gemfile.bak")
+      new_version.copy_file("Gemfile.lock")
+      new_version.save
+      expect(object.head).to eq("v1")
+      expect(object).to be_valid
+      expect(object.inventory.state.one? { |_, filenames| filenames.include?("Gemfile.lock") }).to be true
+      expect(object.inventory.manifest.one? { |_, filenames| filenames.include?("v1/content/Gemfile.lock") }).to be true
+      expect(object.inventory.state.one? { |_, filenames| filenames.include?("Gemfile.bak") }).to be true
+      expect(object.inventory.manifest.one? { |_, filenames| filenames.include?("v1/content/Gemfile.bak") }).to be true
+      expect(new_version.file_names).to eq(["Gemfile.bak", "Gemfile.lock"])
+      expect(File.exist?(new_version.send(:content_path) / "Gemfile.bak")).to be true
+      expect(File.exist?(new_version.send(:content_path) / "Gemfile.lock")).to be false
+      File.write("tmp/Gemfile.bak", "change the digest")
+      head_version = object.head_version
+      head_version.copy_file("tmp/Gemfile.bak")
+      head_version.save
+      expect(object.head).to eq("v1")
+      expect(object).to be_valid
+      expect(object.inventory.state.one? { |_, filenames| filenames.include?("Gemfile.lock") }).to be true
+      expect(object.inventory.manifest.one? { |_, filenames| filenames.include?("v1/content/Gemfile.lock") }).to be true
+      expect(object.inventory.state.one? { |_, filenames| filenames.include?("Gemfile.bak") }).to be true
+      expect(object.inventory.manifest.one? { |_, filenames| filenames.include?("v1/content/Gemfile.bak") }).to be true
+      expect(head_version.file_names).to eq(["Gemfile.lock", "Gemfile.bak"])
+      expect(File.exist?(new_version.send(:content_path) / "Gemfile.bak")).to be true
+      expect(File.exist?(new_version.send(:content_path) / "Gemfile.lock")).to be true
+    end
+  end
 end
