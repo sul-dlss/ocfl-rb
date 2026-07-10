@@ -85,7 +85,7 @@ RSpec.describe OCFL::Object do
   describe "#path" do
     before do
       object.begin_new_version.tap do |version|
-        version.copy_file("Gemfile.lock")
+        version.copy_file("spec/fixtures/files/file1.txt", destination_path: "file1.txt")
         version.save
       end
       object.begin_new_version.tap do |version|
@@ -96,7 +96,7 @@ RSpec.describe OCFL::Object do
 
     it "returns the path from the specified version's inventory" do
       expect(object.path(filepath: "ocfl.rbs", version: "v2"))
-        .to eq(Pathname.new(object.root) / "v2/content/ocfl.rbs")
+        .to eq(Pathname.new(object.root) / "v2/content/#{OCFL_RBS_DIGEST}")
     end
 
     context "when the filepath does not exist" do
@@ -108,8 +108,8 @@ RSpec.describe OCFL::Object do
 
     context "when version is nil" do
       it "returns the path from the object's inventory" do
-        expect(object.path(filepath: "Gemfile.lock"))
-          .to eq(Pathname.new(object.root) / "v1/content/Gemfile.lock")
+        expect(object.path(filepath: "file1.txt"))
+          .to eq(Pathname.new(object.root) / "v1/content/#{FILE1_TXT_DIGEST}")
       end
 
       context "when the filepath does not exist" do
@@ -126,7 +126,7 @@ RSpec.describe OCFL::Object do
 
     before do
       object.begin_new_version.tap do |version|
-        version.copy_file("Gemfile.lock")
+        version.copy_file("spec/fixtures/file1.txt", destination_path: "file1.txt")
         version.save
       end
     end
@@ -135,21 +135,21 @@ RSpec.describe OCFL::Object do
       let!(:before_keys) { object.inventory.manifest.keys }
 
       around do |example|
-        FileUtils.touch("spec/Gemfile.lock")
+        FileUtils.touch("spec/file1.txt")
         example.run
       ensure
-        FileUtils.rm("spec/Gemfile.lock")
+        FileUtils.rm("spec/file1.txt")
       end
 
       it "overwrites the file" do
         expect do
-          overwrite.copy_file("spec/Gemfile.lock")
+          overwrite.copy_file("spec/file1.txt", destination_path: "file1.txt")
           overwrite.save
         end.not_to change(object, :head)
         expect(object).to be_valid
         expect(object.inventory.manifest.keys).not_to include before_keys.first
-        expect(object.inventory.manifest.values).to eq [["v1/content/Gemfile.lock"]]
-        expect(object.inventory.versions["v1"].state.values).to eq [["Gemfile.lock"]]
+        expect(object.inventory.manifest.values).to eq [["v1/content/#{EMPTY_FILE_DIGEST}"]]
+        expect(object.inventory.versions["v1"].state.values).to eq [["file1.txt"]]
       end
     end
   end
@@ -177,7 +177,7 @@ RSpec.describe OCFL::Object do
         expect { new_version.save }.to change(object, :head)
         expect(object).to be_valid
         expect(object.inventory.manifest.keys).to eq before_keys
-        expect(object.inventory.manifest.values).to eq [["v1/content/file1.xml"]]
+        expect(object.inventory.manifest.values).to eq [["v1/content/#{EMPTY_FILE_DIGEST}"]]
         expect(object.inventory.versions["v1"].state.values).to eq [["file1.xml"]]
       end
     end
@@ -206,7 +206,7 @@ RSpec.describe OCFL::Object do
         expect { new_version.save }.not_to change(object, :head)
         expect(object).to be_valid
         expect(object.inventory.manifest.keys).to eq before_keys
-        expect(object.inventory.manifest.values).to eq [["v1/content/file1.xml"]]
+        expect(object.inventory.manifest.values).to eq [["v1/content/#{EMPTY_FILE_DIGEST}"]]
         expect(object.inventory.versions["v1"].state.values).to eq [["file1.xml"]]
       end
     end
