@@ -10,10 +10,12 @@ module OCFL
     # @param [Pathname, String] root the path to the object root within the OCFL structure
     # @param [Inventory, nil] inventory this is only passed in when creating a new version
     # @param [String, nil] content_directory the directory to store versions in
-    def initialize(root:, identifier:, inventory: nil, content_directory: nil)
+    # @param [String] digest_algorithm ("sha512") the digest type to use
+    def initialize(root:, identifier:, inventory: nil, content_directory: nil, digest_algorithm: "sha512")
       @identifier = identifier
       @root = Pathname.new(root)
       @content_directory = content_directory
+      @digest_algorithm = digest_algorithm
       @version_inventory = {}
       @version_inventory_errors = {}
       @inventory = inventory
@@ -133,7 +135,7 @@ module OCFL
             id: identifier,
             version: "v0",
             type: Inventory::URI_1_1,
-            digestAlgorithm: "sha512",
+            digestAlgorithm: @digest_algorithm,
             head: "v0",
             versions: {},
             manifest: {}

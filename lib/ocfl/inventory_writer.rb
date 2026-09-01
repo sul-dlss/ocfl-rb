@@ -3,12 +3,13 @@
 module OCFL
   # Writes a OCFL Inventory to json on disk
   class InventoryWriter
-    def initialize(inventory:, path:)
+    def initialize(inventory:, path:, checksum:)
       @path = path
       @inventory = inventory
+      @checksum = checksum
     end
 
-    attr_reader :inventory, :path
+    attr_reader :inventory, :path, :checksum
 
     def write
       write_inventory
@@ -24,11 +25,11 @@ module OCFL
     end
 
     def checksum_file
-      path / "inventory.json.sha512"
+      path / "inventory.json.#{checksum.type}"
     end
 
     def update_inventory_checksum
-      digest = Digest::SHA512.file inventory_file
+      digest = checksum.file inventory_file
       File.write(checksum_file, "#{digest} inventory.json")
     end
   end
