@@ -95,11 +95,19 @@ module OCFL
       digest = Digest::SHA512.file(incoming_path).to_s
       version_content_path = content_path.relative_path_from(object.root)
       file_path_relative_to_root = (version_content_path / logical_file_path).to_s
-      result = @manifest.key?(digest)
-      @manifest[digest] ||= []
-      @state[digest] ||= []
-      @manifest[digest].push(file_path_relative_to_root)
-      @state[digest].push(logical_file_path)
+      if (stale_digest_hash = state.select { |_, filenames| filenames.include?(logical_file_path) }.presence)
+        stale_digest = stale_digest_hash.keys.first
+        stale_paths = stale_digest_hash.values.first
+        stale_paths.delete(logical_file_path)
+        deduplicated_file = stale_paths.first
+        manifest[stale_digest] -= [file_path_relative_to_root]
+        FileUtils.cp(content_path / logical_file_path, content_path / deduplicated_file)
+      end
+      result = manifest.key?(digest)
+      manifest[digest] ||= []
+      state[digest] ||= []
+      manifest[digest].push(file_path_relative_to_root)
+      state[digest].push(logical_file_path)
       result
     end
 
