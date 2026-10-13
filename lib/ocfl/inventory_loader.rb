@@ -38,6 +38,8 @@ module OCFL
       else
         Failure(errors)
       end
+    rescue JSON::ParserError => e
+      Failure([e.message])
     end
   end
 end
